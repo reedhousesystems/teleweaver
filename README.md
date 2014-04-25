@@ -1,11 +1,10 @@
-Teleweaver
-==========
+======================================================================================
+! Welcome to Teleweaver - A robust software suite built for marginalised communities !
+======================================================================================
 
-Teleweaver is a robust software suite for marginalized communities.
+Teleweaver home page: http://www.reedhousesystems.com
 
-Project Owners:
-Ed de la Rey
-Mosiuoa Tsietsi
+Directory Structure
+-------------------
 
-Contributors:
-
++---thirdparty/mobile		(Third party mobile applications)
