@@ -1,0 +1,317 @@
+﻿Version=2.71
+IconFile=
+NumberOfModules=12
+Module1=menu
+ModuleVisible1=1
+Module2=viewproduct
+ModuleVisible2=1
+Module3=details
+ModuleVisible3=1
+Module4=add
+ModuleVisible4=1
+Module5=sales
+ModuleVisible5=1
+Module6=DBUtils
+ModuleVisible6=1
+Module7=EditArtist
+ModuleVisible7=1
+Module8=CustomMsgBox
+ModuleVisible8=1
+Module9=CToast
+ModuleVisible9=1
+Module10=HttpJob
+ModuleVisible10=1
+Module11=HttpUtils2Service
+ModuleVisible11=1
+Module12=Help
+ModuleVisible12=1
+Package=b4a.sysdev
+DoNotOverwriteManifest=False
+ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.basic4ppc.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="4" android:targetSdkVersion="14"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~'End of default text.~\n~
+UserTypesHint=CustomMsgBox,CToast,HttpJob
+NumberOfFiles=15
+File1=AddProduct.bal
+File2=b.png
+File3=cameraMsg.png
+File4=central.bal
+File5=DBUtils.bas
+File6=editArtist.bal
+File7=HttpJob.bas
+File8=HttpUtils2Service.bas
+File9=logscreen.bal
+File10=no product image.png
+File11=okaddicon.png
+File12=pnledit_products.bal
+File13=Products.bal
+File14=real.db
+File15=Sales.bal
+NumberOfLibraries=13
+Library1=camera
+Library2=core
+Library3=customtoast
+Library4=dialogs
+Library5=http
+Library6=httputils2
+Library7=json
+Library8=phone
+Library9=preferenceactivity
+Library10=reflection
+Library11=richstring
+Library12=sql
+Library13=stringutils
+@EndOfDesignText@
+#Region  Project Attributes 
+	#ApplicationLabel: SellMyCraft
+	#VersionCode: 1
+	#VersionName: 
+	'SupportedOrientations possible values: unspecified, landscape or portrait.
+	#SupportedOrientations: unspecified
+	#CanInstallToExternalStorage: False
+#End Region
+
+#Region  Activity Attributes 
+	#FullScreen: False
+	#IncludeTitle: True
+#End Region
+
+Sub Process_Globals
+	'These global variables will be declared once when the application starts.
+	'These variables can be accessed from all modules.
+	Dim DBFileName As String				: DBFileName = "y.db"
+	'Dim DBFileDir As String					: DBFileDir = File.DirInternal
+	'Dim DBFileDir As String					: DBFileDir = File.DirRootExternal
+	Dim aSQL As SQL	
+	Dim cur As Cursor
+	Dim DBTableName As String				: DBTableName = "lookupUsrPass"  
+	Dim DBTableProduct As String			: DBTableProduct = "Product"  
+	Dim DBTableArtist As String 			: DBTableArtist = "Artist"  
+	Dim globLang As String
+	Dim globUsername, globPass, globSurn, globID, globName As String	
+	Dim hc As HttpClient
+	Dim m As Map
+End Sub
+
+Sub Globals
+	'These global variables will be redeclared each time the activity is created.
+	'These variables can only be accessed from this module.
+
+    Dim txtUsername As EditText
+	Dim txtPass As EditText
+	Dim lblWrongDetails As Label
+	Dim txtEDITDesc As EditText
+	Dim imgLogin As ImageView
+	Dim spLanguage As Spinner
+		Dim BoolcorrectCredentials, okToParse As Boolean
+	Dim login As Label
+	Dim lblAddtitle As Label
+	Dim lbluser As Label
+	Dim lblEmptypass As Label
+	Dim Label1 As Label
+End Sub
+
+Sub Activity_Create(FirstTime As Boolean)
+	'Do not forget to load the layout file created with the visual designer. For example:
+	
+	Activity.LoadLayout("logscreen")
+	spLanguage.AddAll(Array As String("English","isiXhosa"))
+	If File.Exists(File.DirInternal,"y.db") = False Then
+		File.Copy(File.DirAssets,"y.db",File.DirInternal,"y.db")
+	End If
+		hc.Initialize("hc")	
+	If aSQL.IsInitialized = False Then
+		aSQL.Initialize(File.DirInternal, "y.db", False)
+	End If
+
+	
+End Sub
+
+Sub Activity_Resume
+
+End Sub
+	
+Sub Activity_Pause (UserClosed As Boolean)
+
+End Sub
+
+Sub changeLanguage
+	If globLang = "English" Then
+		txtUsername.Hint = "Enter username"
+		txtPass.Hint = "Enter password"
+		login.Text = "Login"
+		lblWrongDetails.Text = "The username or password you entered is incorrect."
+		Label1.text = "Language:"
+		lblEmptypass.Text = "Please enter your password."
+		lbluser.Text = "Please enter your username."
+	Else If globLang = "isiXhosa" Then
+		txtUsername.Hint = "Faka igama lam"
+		txtPass.Hint = "Faka igama elimfihlo"
+		login.Text = "Ngena"
+		lblWrongDetails.Text = "Inkcukacha ozikafileyo aziluganga."
+		Label1.Text = "Ulwimi:"
+		lblEmptypass.Text = "Faka igama elimfihlo."
+		lbluser.Text = "Faka igama lam."
+	End If
+End Sub
+Sub check_creds
+
+
+			'Extract the Username, Password from lookup table 
+			cur = aSQL.ExecQuery("SELECT Name, Surname, ArtistID FROM Artist")
+			
+		For i = 0 To cur.RowCount - 1	
+		  cur.Position = i
+			If txtUsername.Text.EqualsIgnoreCase(m.Get("username")) AND txtPass.Text.EqualsIgnoreCase(m.Get("password")) Then
+				 'update straight from TW
+				aSQL.ExecNonQuery("UPDATE Artist SET Name = '" & m.Get("firstName") & "' , Surname = '" & m.Get("lastName") & "' WHERE ArtistID = " & m.Get("id"))
+				
+								
+'				globUsername = txtUsername.Text
+'				globPass = txtPass.Text
+				'to be used later 
+				
+				
+				globID = m.Get("id")
+			 
+				globName = m.Get("firstName")  & " " & m.Get("lastName")
+			
+				
+				
+				StartActivity("menu")
+				Activity.Finish
+				BoolcorrectCredentials = True
+							
+			'no match found!
+		    Else
+		
+			
+				lblWrongDetails.Visible = True
+				txtPass.Text = ""
+				txtUsername.Text = ""
+				txtUsername.RequestFocus	
+			End If
+
+     Next
+	
+
+End Sub
+Sub login_Click   'Connect to the remote server and get the messages.
+	
+	lblWrongDetails.Visible = False
+	lbluser.Visible = False
+	lblEmptypass.Visible = False
+	lblWrongDetails.Visible = False 
+	okToParse = False
+	If txtUsername.text <> "" Then
+		If txtPass.text <> "" Then
+		  okToParse = True
+				   Dim remProdUrl As String	
+		 	Dim req As HttpRequest				'Set up an http request connection	  
+			remProdUrl = "http://146.231.88.170:8080/reedhousesystems-its-africa-web/service/art/get-profile/" & txtUsername.Text
+		    req.InitializeGet(remProdUrl)	 'Initialize the http get request
+			If globLang = "isiXhosa" Then
+		    	ProgressDialogShow("Authenticating credentials on TeleWeaver...")
+			Else
+				ProgressDialogShow("Authenticating credentials on TeleWeaver...")
+			End If
+		    hc.Execute(req,1)	 
+	
+	    Else		
+			
+			lblEmptypass.Visible = True
+			txtPass.Text = ""
+			txtPass.RequestFocus	
+		End If		
+		
+	Else
+		
+			lbluser.Visible = True
+			txtUsername.Text = ""
+			txtUsername.RequestFocus
+	End If
+	
+	
+	
+						' And the execute it.
+
+
+End Sub
+
+Sub hc_ResponseSuccess (Response As HttpResponse, TaskId As Int)			'We got connection and data !!
+     Dim MyT As CToast
+	MyT.Initialize(Activity, Me, Activity.Height, Activity.Width)
+    ProgressDialogHide	'Close the waiting message..
+
+    Dim resultString As String
+    resultString = Response.GetString("UTF8")			'This holds the returned data 
+	' resultString = resultString.SubString(1) 'removes first character
+    Log(resultString)
+	
+	If resultString = Null OR resultString = "[]" Then
+		lblWrongDetails.Visible = True
+		
+	txtPass.Text = ""
+				txtUsername.Text = ""
+				txtUsername.RequestFocus
+	
+	Else If okToParse Then
+	   'begin JSON Parsing
+	
+		Dim Jp As JSONParser
+	    Dim aList As List
+		Jp.Initialize(resultString)
+		aList = Jp.NextArray
+		m = aList.Get(0)
+		
+		check_creds
+	End If
+'	Log(m.Get("title"))
+	
+'	Log(m.Get("gender"))
+'	Log(m.Get("lastName"))
+'	Log(m.Get("populationGroup"))
+'	Log(m.Get("rsaIdNumber"))
+'	Log(m.Get("email"))
+	
+'	Log(m.Get("password"))
+
+
+	
+	
+	  
+	
+	
+	
+		
+End Sub
+
+Sub hc_ResponseError (Response As HttpResponse, Reason As String, StatusCode As Int, TaskId As Int)		'No connection :-(
+   Log("Error connecting: " & Reason & " " & StatusCode)
+    If Response <> Null Then
+        Log(Response.GetString("UTF8"))
+		ProgressDialogHide
+        Response.Release
+    End If
+End Sub 
+
+
+Sub ImageView2_Click
+	StartActivity("editArtist")
+	Activity.Finish
+End Sub
+Sub btnEditProfile_Click
+	ImageView2_Click
+End Sub
+Sub spLanguage_ItemClick (Position As Int, Value As Object)
+	If spLanguage.SelectedItem = "English" Then
+		globLang = "English"
+	Else If spLanguage.SelectedItem = "isiXhosa" Then
+		globLang = "isiXhosa"
+	End If
+	changeLanguage
+	
+End Sub
+Sub imgLogin_Click
+	login_Click
+End Sub
+
+
