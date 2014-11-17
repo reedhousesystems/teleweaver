@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" version="3.0">
+  <servlet-mapping>
+    <servlet-name>javax.ws.rs.core.Application</servlet-name>
+    <url-pattern>/rest/*</url-pattern>
+  </servlet-mapping>
+  <security-constraint>
+	<web-resource-collection>
+		<web-resource-name>All Access</web-resource-name>
+		<url-pattern>/*</url-pattern>
+	</web-resource-collection>
+	<auth-constraint>
+		<role-name>artist</role-name>
+	</auth-constraint>
+	<user-data-constraint>
+       <transport-guarantee>NONE</transport-guarantee>
+  </user-data-constraint>
+	</security-constraint>
+  		<login-config>
+  			<auth-method>BASIC</auth-method>
+  			<realm-name>Teleweaver Auth realm</realm-name>
+  		</login-config>
+  		<security-role>
+  			<description>All artists</description> 
+  			<role-name>artist</role-name>
+		</security-role>
+</web-app>
