@@ -19,6 +19,7 @@
 
 package org.rhs.ecommerce.hibernate;
 
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 import javax.persistence.Entity;
@@ -51,8 +52,8 @@ public class Product {
 	private int shop;
 	private int weight;
 	private int category;
-	private GregorianCalendar added;
-	private GregorianCalendar modified;
+	private Date added;
+	private Date modified;
 	
 	public int getProductId() {
 		return productId;
@@ -138,16 +139,16 @@ public class Product {
 	public void setCategory(int category) {
 		this.category = category;
 	}
-	public GregorianCalendar getAdded() {
+	public Date getAdded() {
 		return added;
 	}
-	public void setAdded(GregorianCalendar added) {
+	public void setAdded(Date added) {
 		this.added = added;
 	}
-	public GregorianCalendar getModified() {
+	public Date getModified() {
 		return modified;
 	}
-	public void setModified(GregorianCalendar modified) {
+	public void setModified(Date modified) {
 		this.modified = modified;
 	}
 }
