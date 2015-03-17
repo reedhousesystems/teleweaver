@@ -1,0 +1,64 @@
+package com.reedhousesystems.services.core.health.dashboard.requests;
+
+import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement
+public class UpdateUserRequest {
+
+	@NotNull
+    private String firstName;
+	
+	@NotNull
+    private String lastName;
+	
+	@NotNull
+    private String userName;
+	
+    private String role;
+    
+    private String organisation;
+
+    public UpdateUserRequest(){}
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
+	}
+
+	public String getOrganisation() {
+		return organisation;
+	}
+
+	public void setOrganisation(String organisation) {
+		this.organisation = organisation;
+	}
+
+}

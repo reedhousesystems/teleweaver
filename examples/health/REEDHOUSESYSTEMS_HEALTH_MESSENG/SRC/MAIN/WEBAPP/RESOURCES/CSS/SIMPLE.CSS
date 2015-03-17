@@ -1,0 +1,12 @@
+.float-left { float: left; }
+.float-right { float: right }
+button.long-button { width: 200px; }
+body { padding-top: 54px; }
+#header .section-main-menu {
+	background: #aaa;
+	font-size: 14px;
+}
+#header #news-ticker { background-color: #f8f0db; }
+#navigation li a { color: white; }
+/* .pop-messages { display: none; } */
+#factlity-list { margin-top: 20px; }

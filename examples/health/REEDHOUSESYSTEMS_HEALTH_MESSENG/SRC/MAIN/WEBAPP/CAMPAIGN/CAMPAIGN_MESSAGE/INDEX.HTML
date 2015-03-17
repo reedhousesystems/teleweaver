@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+	<head>
+		<meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Siyakhula Living Lab Health Information Resource</title>
+		<link rel="stylesheet" href="../../resources/css/font-awesome/css/font-awesome.min.css">
+		<link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+		<link rel="stylesheet" href="../../resources/js/bootstrap/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="../../resources/js/jquery-ui/css/ui-lightness/jquery-ui-1.9.2.custom.css">
+		<link rel="stylesheet" type="text/css" href="../../resources/js/jquery_news_ticker/styles/ticker-style.css">
+		<link rel="stylesheet" type="text/css" href="../../resources/css/style.css">
+		<link rel="stylesheet" type="text/css" href="../../resources/css/toastr.css">
+		<link rel="stylesheet" type="text/css" href="../../resources/css/simple.css">
+	</head>
+	<body>
+		<header>
+			<div id="header">
+				<section id="top" class="navbar navbar-inverse nav-justified navbar-fixed-top bs-docs-nav" role="banner" id="banner">
+					<div class="container">
+						<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+							<ul id="navigation" class="nav navbar-nav">
+								<li class="active" id="campaigns"><a href="../"><i class="fa fa-bullhorn fa-fw"></i> <strong lang="en">CAMPAIGNS</strong><span class="badge pull-right" id="campaign-number"></span></a></li>
+								<li id="surveys"><a href="../../survey/"><i class="fa fa-check-square-o fa-fw"></i> <strong lang="en">SURVEYS</strong><span class="badge pull-right" id="survey-number"></span></a></li>
+								<li id="events"><a href="../../event/"><i class="fa fa-calendar fa-fw"></i> <strong lang="en">EVENTS</strong><span class="badge pull-right" id="events-number"></span></a></li>
+								<li id="news"><a href="../../news/"><i class="fa fa-globe fa-fw"></i> <strong lang="en">NEWS</strong></a></li>
+								<li id="topics"><a href="../../topic/"><i class="fa fa-comment fa-fw"></i> <strong lang="en">TOPICS</strong></a></li>
+								<li id="facilities-services"><a href="../../service/#"><i class="fa fa-medkit fa-fw"></i> <strong lang="en">SERVICES</strong></a></li>
+							</ul>
+							<ul id="navigation" class="nav navbar-nav navbar-right">
+								<li class="dropdown">
+									<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> <span id="loggedinUserName"></span><b class="caret"></b></a>
+									<ul class="dropdown-menu" style="background-color: black;">
+										<li><a href="#lang-en" onclick="window.lang.change('xh'); return false;"><span lang="en">Switch to isiXhosa</span></a></li>
+									</ul>
+								</li>
+							</ul>
+						</div>			
+					</div>
+				</section>
+				<section id="ticker">
+					<div class="container">
+						<ul id="ticker-titles" class="js-hidden"></ul>
+					</div>
+				</section>
+			</div>
+		</header>
+		<div id="content" class="container">
+			<div class="panel panel-success">
+				<div class="panel-heading"></div>
+				<div class="panel-body">
+					<p id="message-item"></p>
+					<p id="message-description"></p>
+				</div>
+				<div class="panel-footer">
+					<ul class="pager">
+					  	<li class="previous disabled"><a href="#">&larr; Previous</a></li>
+					  	<li class="next"><a href="#">Next &rarr;</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../resources/js/jquery-1.10.2.min.js"></script>
+		<script type="text/javascript" src="../../resources/js/jquery-ui/js/jquery-ui-1.9.2.custom.min.js"></script>
+		<script type="text/javascript" src="../../resources/js/bootstrap/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="../../resources/js/jquery_news_ticker/includes/jquery.ticker.js"></script>
+		<script type="text/javascript" src="../../resources/js/toastr.js"></script>
+		<script type="text/javascript" src="../../resources/js/jquery.validate.min.js"></script>
+		<script type="text/javascript" src="../../resources/js/Readmore.js"></script>
+		<script type="text/javascript" src="../../resources/js/sha256.js"></script>
+		<script type="text/javascript" src="../../resources/js/enc-base64-min.js"></script>
+		<script type="text/javascript" src="../../resources/js/store.js"></script>
+		<script type="text/javascript" src="../../resources/js/jquery-lang.js" charset="utf-8"></script>
+		<script type="text/javascript" src="../../resources/js/jquery-cookie.js" charset="utf-8"></script>
+		<script type="text/javascript" src="../../resources/js/nonDynamic.js" charset="utf-8"></script>
+		<script type="text/javascript" src="../../resources/js/messenger.js"></script>
+		<script type="text/javascript" src="../../resources/js/util.js"></script>
+		<script type="text/javascript">
+			if (!is_logged_in())
+				window.location = 'http://localhost:8080/health-profile';
+			/* Create language switcher instance and set default language to en */
+			window.lang = new Lang('en');
+			var theUser = store.get('currentUser')
+			if (theUser) {
+				var theCurrentUser = JSON.parse(theUser);
+				console.log(theCurrentUser.firstName + ' ' + theCurrentUser.lastName)
+				$('#loggedinUserName').html(theCurrentUser.firstName + ' ' + theCurrentUser.lastName)
+			}
+			
+			$(function() {
+				var padding = "../../"
+				$("#ticker-titles").empty();
+				getAuth(padding, "log/title", function(data, error) {
+					if (error) {
+						toastr.error("Error getting health information");
+						return false;
+					}
+					var titleList = data instanceof Array ? data : [data];
+					if (titleList != null) {
+						$.each(titleList, function(index, item) {
+							$("#ticker-titles").append("<li>" + item.title + "</li>");
+						});
+					} else {
+						$("#ticker-titles").append("<li>No health information created for you is available</li>");
+						$("#ticker-titles").append("<li>No health information created for you is available</li>");
+					}
+					$("#ticker-titles").ticker({ titleText: 'Your health information' });
+				});
+				
+				getAuth(padding, 'campaigns/'+ $.cookie("messenger-campaign-id") + '/message', function(data, error) {
+					if (error) {
+						toastr.error("Error getting campaign messages");
+						return false;
+					}
+					var regex = /(<([^>]+)>)/ig;
+					var messageList = data instanceof Array ? data : [data];
+					var messageNumber = messageList.length;
+					var index = 0;
+					logMessageView(messageList[index].id, messageList[index].item, $.cookie("messenger-campaign-id"))
+					$(".panel-heading").html($.cookie("messenger-campaign-title").replace(regex, ""));
+					$("#message-item").html(messageList[index].item);
+					$("#message-description").html(messageList[index].description);
+					$('li.next a').click(function() {
+						if ($('li.previous').hasClass('disabled')) {
+							$('li.previous').removeClass('disabled');
+						}
+						index++;
+						logMessageView(messageList[index].id, messageList[index].item, $.cookie("messenger-campaign-id"))
+						if (index == messageNumber-1) {
+							$('li.next').addClass('disabled');
+						}
+						$("#message-item").html(messageList[index].item);
+						$("#message-description").html(messageList[index].description);
+					});
+					$('li.previous').click(function() {
+						if ($('li.next').hasClass('disabled')) {
+							$('li.next').removeClass('disabled');
+						}
+						index--
+						logMessageView(messageList[index].id, messageList[index].item, $.cookie("messenger-campaign-id"))
+						if (index == 0) {
+							$('li.previous').addClass('disabled');
+						}
+						$("#message-item").html(messageList[index].item);
+						$("#message-description").html(messageList[index].description);
+					});
+				});
+				
+				var logMessageView = function(messageId, message, campaignId) {
+					console.log("Logging campaign access...");
+					/* postAuth(padding, 'bill/' + campaignId, JSON.stringify({ "messageId" : messageId, "message": message }), function(error) {
+						if (error)
+							console.log(error);
+					}); */
+				}				
+			});
+		</script>
+	</body>
+</html>

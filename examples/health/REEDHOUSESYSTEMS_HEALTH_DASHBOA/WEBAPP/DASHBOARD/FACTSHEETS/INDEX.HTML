@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+	<head>
+		<meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Health Messages Communication Website</title>
+		<link rel="stylesheet" type="text/css" href="../../js/font-awesome-4.0.3/css/font-awesome.min.css">
+		<link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+		<link rel="stylesheet" type="text/css" href="../../js/bootstrap/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="../../js/jqueryui/css/ui-lightness/jquery-ui-1.9.2.custom.css">
+		<link rel="stylesheet" type="text/css" href="../../css/blue.css">
+		<link rel="stylesheet" type="text/css" href="../../css/new.css">
+		<link rel="stylesheet" type="text/css" href="../../css/toastr.css" />
+	</head>
+	<body>
+		<div class="modal fade" id="modal_dialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title"></h4>
+					</div>
+					<div class="modal-body"></div>
+					<div id="modal-footer" class="modal-footer"></div>
+				</div>
+			</div>
+		</div>
+		<div id="wrapper">
+			<header id="header">
+				<a id="top-bar-toggle" class="navbar-toggle collapsed" data-target=".top-bar-collapse" data-toggle="collapse" href="javascript:;"><i class="fa fa-cog"></i></a>
+				<a id="sidebar-toggle" class="navbar-toggle collapsed" data-target=".sidebar-collapse" data-toggle="collapse" href="javascript:;"><i class="fa fa-reorder"></i></a>
+			</header>
+			<nav id="top-bar" class="collapse top-bar-collapse">
+				<ul class="nav navbar-nav pull-left">
+					<li><a href=""><i class="fa fa-home"></i>Home</a></li>
+				</ul>
+				<ul class="nav navbar-nav pull-right">
+					<li class="dropdown">
+						<a class="dropdown-toggle" href="javascript:;" data-toggle="dropdown"><i class="fa fa-user"></i> <span id="loggedAs"></span><span class="caret"></span></a>
+						<ul class="dropdown-menu" role="menu">
+							<li><a href="#" onClick="logout();"><i class="fa fa-sign-out"></i>Logout</a></li>
+							<li><a href="#" onClick="setChangePasswordForm();"><i class="fa fa-key"></i>Change Password</a></li>
+						</ul>
+					</li>
+				</ul>
+			</nav>
+			<div id="sidebar-wrapper" class="collapse sidebar-collapse">
+				<div id="search">
+					<form>
+						<input id="search" class="form-control input-sm" type="text" placeholder="Search..." name="search">
+						<button id="search-btn" class="btn" type="submit"><i class="fa fa-search"></i></button>
+					</form>
+				</div>
+				<nav id="sidebar">
+					<ul id="main-nav" class="open-active">
+						<li><a href="#"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+						<li><a href="../campaigns/"><i class="fa fa-bullhorn"></i> Campaigns</a></li>
+						<li><a href="../surveys/"><i class="fa fa-check-square-o"></i> Surveys</a></li>
+						<li><a href="../news/"><i class="fa fa-globe"></i> News</a></li>
+						<li class="active"><a href=""><i class="fa fa-file-text-o"></i> Health Topics</a></li>
+						<li><a href="../events/"><i class="fa fa-calendar"></i> Events</a></li>
+<!-- 						<li><a href="../reports/"><i class="fa fa-pencil"></i> Reports</a></li> -->
+					</ul>
+				</nav>
+			</div>
+			<div id="content">
+				<div id="content-header"><h1>Dashboard</h1></div>
+				<div id="content-container"></div>
+			</div>
+		</div>
+		<footer class="bs-footer clearFix" role="contentinfo"><ul class="nav pull-right"><li> Copyright &copy; 2013, Healthcomm.ru.ac.za. </li></ul></footer>
+		<script type="text/javascript" src="../../js/jquery-1.10.2.min.js"></script>
+		<script type="text/javascript" src="../../js/jqueryui/js/jquery-ui-1.9.2.custom.min.js"></script>
+		<script type="text/javascript" src="../../js/bootstrap/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="../../js/DataTables-1.9.4/media/js/jquery.dataTables.min.js"></script>
+		<script type="text/javascript" src="../../js/DT_bootstrap.js"></script>
+		<script type="text/javascript" src="../../js/jquery.tableCheckable.js"></script>
+		<script type="text/javascript" src="../../js/jquery.icheck.min.js"></script>
+		<script type="text/javascript" src="../../js/tiny_mce/jquery.tinymce.js"></script>
+		<script type="text/javascript" src="../../js/toastr.js"></script>
+		<script type="text/javascript" src="../../js/jquery.validate.min.js"></script>
+		<script type="text/javascript" src="../../js/sha256.js"></script>
+		<script type="text/javascript" src="../../js/enc-base64-min.js"></script>
+		<script type="text/javascript" src="../../js/jquery.cookie.js"></script>
+		<script type="text/javascript" src="../../js/store.js"></script>
+		<script type="text/javascript" src="../../js/util.js"></script>
+		<script type="text/javascript" src="../../js/paging.js"></script>
+		<script type="text/javascript">
+		
+			if (!is_logged_in()) window.location = '../home/';
+	
+			var storedUser = store.get('dashboard-currentUser')
+			if (storedUser) {
+				var user = JSON.parse(storedUser)
+				$('#loggedAs').html(' Logged in as ' + user.firstName + ' ' + user.lastName);
+			}
+			
+			$(function() {
+				
+				getAllFactsheets();
+				
+				function getAllFactsheets() {
+					console.log('Getting all factsheets...');
+					$.ajax({
+						type: 'GET',
+						url: rootURL + 'factsheet',
+						dataType: 'json',
+						success: function(data) {
+							renderFactsheetList(data);
+						},
+						error: function() {
+							toastr.error('Error getting all the factsheets');
+						}
+					});
+				}
+				
+				var renderFactsheetList = function( data ) {
+					$( '#content-container' ).html(
+						'<div class="row">' +
+							'<div class="col-md-12">' +
+								'<div class="portlet">' +
+									'<div id="srv-portlet-header" class="portlet-header"><h3><i class="fa fa-file-text-o"></i> Fact Sheets</h3></div>' +
+										'<div class="portlet-content">' +
+											'<div>' +
+												'<span class="btn" id="btnAdd"><i class="fa fa-plus fa-lg"></i> Add</span>' +
+												'<span class="btn" id="btnDelete"><i class="fa fa-trash-o fa-lg"></i> Delete</span>' +
+												'<span class="btn" id="btnArchive"><i class="fa fa-archive fa-lg"></i> Archive</span>' +
+												'<span class="btn" id="btnPublish"><i class="fa fa-upload fa-lg"></i> Publish</span>' +
+												'<span class="btn" id="btnListFactsheets"><i class="fa fa-arrow-left fa-lg"></i> Back to Fact Sheet List</span>' +
+											'</div>' +
+											'<div id="portlet-main-content">' +
+												'<div class="table-responsive">' +
+													'<table id="tblFactsheets" class="table table-striped table-bordered table-hover table-highlight table-checkable">' +
+														'<thead>' +
+															'<tr>' +
+																'<th><input id="checkall" type="checkbox" class="icheck-all"></th>' +
+																'<th>VIEW MORE</th>' +
+																'<th>Title</th>' +
+																'<th>CREATION DATE</th>' +								
+																'<th>STATUS</th>' +
+																'<th>ID</th>' +
+																'<th>ACTIONS</th>' +
+															'</tr>' +
+														'</thead>' +
+														'<tbody></tbody>' +
+														'<tfoot>' +
+															'<tr>' +
+																'<th><input class="form-control input-sm hide" type="text" placeholder=" "></th>' +
+																'<th><input class="form-control input-sm hide" type="text" placeholder=" "></th>' +
+																'<th><input class="form-control input-sm show" type="text" placeholder="Title"></th>' +
+																'<th><input class="form-control input-sm show" type="text" placeholder="Creation Date"></th>' +
+																'<th><input class="form-control input-sm show" type="text" placeholder="Status"></th>' +
+																'<th><input class="form-control input-sm hide" type="text" placeholder="ID"></th>' +
+																'<th><input class="form-control input-sm hide" type="text" placeholder="Actions"></th>' +
+															'</tr>' +
+														'</tfoot>' +
+													'</table>' +
+												'</div>' +
+											'</div>' +
+										'</div>' +
+									'</div>' +
+								'</div>' +
+							'</div>' +
+						'</div>'
+					);
+					$('#btnListFactsheets').hide();
+					var factsheetList = data instanceof Array ? data : [data];
+					$.each(factsheetList, function(index, factsheet) {
+						var labelStatus = factsheet[2] == 'Archived' ? 'default' : (factsheet[2]=='Published' ? 'success' : 'secondary');
+						$('#content-container tbody').append(
+							'<tr id="tr-'+factsheet[3]+'">' +
+								'<td><input id="'+factsheet[3]+'" type="checkbox" class="icheck-input"></td>' +
+								'<td class="text-center"><i data-identity="'+factsheet[3]+'" class="fa fa-plus-circle fa-lg view-more"></i></td>' +
+								'<td>'+factsheet[0]+'</td>' +
+								'<td>'+$.datepicker.formatDate('yy-mm-dd', new Date(factsheet[1]))+'</td>' +
+								'<td id="status-'+factsheet[3]+'"><span class="label label-'+ labelStatus +'">' + factsheet[2] + '</span></td>' +
+								'<td>'+factsheet[3]+'</td>' +
+								'<td class="actions">' +
+									'<span class="btn btn-xs btn-info" id="update-' + factsheet[3] + '"><i title="Edit Factsheet" class="fa fa-pencil fa-1x"></i></span>' +
+									'<span class="btn btn-xs btn-danger" id="delete-' + factsheet[3] + '"><i title="Delete Factsheet" class="fa fa-trash-o fa-1x"></i></span>' +
+									'<span class="btn btn-xs btn-danger" id="archive-' + factsheet[3] + '"><i title="Archive Factsheet" class="fa fa-archive fa-1x"></i></span>' +
+									'<span class="btn btn-xs btn-success" id="publish-' + factsheet[3] + '"><i title="Publish Factsheet" class="fa fa-upload fa-1x"></i></span>' +
+								'</td>' +
+							'</tr>'
+						);
+						setupActions(factsheet[3], factsheet[2]);
+						$('#update-'+factsheet[3]).click(function() {
+							getFactsheetById(factsheet[3]);
+						});
+						$('#delete-'+factsheet[3]).click(function() {
+							setupDeleteFactsheet(factsheet[3]);
+						});
+						$('#archive-'+factsheet[3]).click(function() {
+							archiveFactsheet(factsheet[3]);
+						});
+						$('#publish-'+ factsheet[3]).click(function() {
+							var response = confirm('Are you sure u want to publish the factsheet?');
+							if (response == false) return false;
+							publishFactsheets(factsheet[3]);
+						});
+					});
+					factsheetDatatableSettings();
+					$('.table-responsive select').on('change', function() {
+						factsheetDatatableSettings();
+					});
+					$('.pagination li a').on('click', function() {
+						factsheetDatatableSettings();
+					});
+					$('#checkall').on('ifChecked', function(event){
+						$('.icheck-input').iCheck('check');
+					});
+					
+					$('#checkall').on('ifUnchecked', function(event){
+						$('.icheck-input').iCheck('uncheck');
+					});
+	
+					$('#btnAdd').click(function() {
+						setupFactsheetForm(null);
+					});
+					
+					$('#btnDelete').click(function() {
+						var checked_checkboxes = $('.icheck-input:checked');
+						if (checked_checkboxes.length == 0) {
+							alert('Please select fact sheets to delete');
+							return false;
+						}
+						var response = confirm('Are you sure you want to delete the selected fact sheets?');
+						if (response == false) return false;
+						checked_checkboxes.each(function(index) {
+							deleteFactsheet($(this).attr('id'));
+						});
+					});
+					
+					$('#btnArchive').click(function() {
+						var checked_checkboxes = $('.icheck-input:checked');
+						if (checked_checkboxes.length == 0) {
+							alert('Please select factsheets to archive');
+							return flase;
+						}
+						var response = confirm('Are you sure you want to archive the selected fact sheets?');
+						if (response == false) return false;
+						checked_checkboxes.each(function(index) {
+							archiveFactsheets($(this).attr('id'));
+						});
+					});
+					
+					$("#btnPublish").click(function() {
+						var checked_checkboxes = $('.icheck-input:checked');
+						if (checked_checkboxes.length == 0) {
+							alert('Please select factsheets to publish');
+							return flase;
+						}
+						var response = confirm('Are you sure you want to publish the selected fact sheets?');
+						if (response == false) return false;
+						checked_checkboxes.each(function(index) {
+							publishFactsheets($(this).attr('id'));
+						});
+					})
+					
+					$('#btnListFactsheets').click(function() {
+						getAllFactsheets();
+					});
+				}
+				
+				var publishFactsheets = function(factsheetId) {
+					console.log('Getting factsheet details with id ' + factsheetId);
+					$.ajax({
+						type: 'GET',
+						url: rootURL + 'factsheet/'+ factsheetId,
+						dataType: 'json',
+						success: function(data) {
+							console.log('Publishing factsheet details with id '+ factsheetId);
+							$.ajax({
+								type: 'POST',
+								contentType: 'application/json',
+								url: teleWeaverURL + 'topic/topic',
+								data: factsheetDataToJSON(data),
+								dataType: 'json',
+								success: function() {
+// 									toastr.success("Factsheet published successfully")
+								},
+								error: function() {
+									toastr.error('Error publishing a factsheet')
+								}
+							})
+						},
+						error: function() {
+							toastr.error('Error getting factsheet')
+						}
+					});
+				}
+				
+				var factsheetDatatableSettings = function() {
+					var oTable = $('#tblFactsheets').dataTable({
+						'bRetrieve': true,
+						'aoColumnDefs': [
+						                 {'bVisible': false, 'aTargets': [5]},
+						                 {'bSortable': false, 'aTargets': [0, 1, 6]}
+						 ],
+						 'aaSorting': [[3, 'desc']],
+					     'iDisplayLength': 10
+					});
+					
+					$('.icheck-input').iCheck({
+						checkboxClass: 'icheckbox_minimal-blue'
+					});
+					
+					$('.icheck-all').iCheck({
+						checkboxClass: 'icheckbox_minimal-blue'
+					});
+				    
+					$('.dataTables_filter input').prop ('placeholder', 'Search...');
+				    
+				    $('tfoot input').keyup(function() {
+				    	oTable.fnFilter(this.value, $('tfoot input').index(this));
+				    });
+				     
+				    /* Add event listener for opening and closing details
+				     * Note that the indicator for showing which row is open is not controlled by DataTables,
+				     * rather it is done here*/
+				     
+				    $('.view-more').click(function () {
+				        var nTr = $(this).parents('tr')[0];
+				        if ( oTable.fnIsOpen(nTr) )
+				        {
+				            $(this).attr('class', 'fa fa-plus-circle fa-lg');
+				            oTable.fnClose( nTr );
+				        }
+				        else
+				        {
+				        	$(this).attr('class', 'fa fa-minus-circle fa-lg');
+				            oTable.fnOpen( nTr, createFactsheetHiddenDetails($(this).data('identity')), 'details' );
+				        }
+				    });
+				}
+				
+				var createFactsheetHiddenDetails = function(factsheetId) {
+					console.log('Getting fact sheet details...');
+					$.ajax({
+						type: 'GET',
+						url: rootURL + 'factsheet/' + factsheetId + '/details',
+						dataType: 'json',
+						success: function(factsheet) {
+							var sOut = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">';
+							var factList = factsheet instanceof Array ? factsheet : [factsheet];
+							$.each(factList, function(index, fact) {
+								sOut += '<tr><td>'+fact.sectionName+'</td><td>'+fact.sectionDescription+'</td></tr>';
+							});
+						    sOut += '</table>';
+							return sOut;
+						},
+						error: function() {
+							toastr.error('Error getting fact sheet details');
+						}
+					});
+				}
+				
+				var factsheetDataToJSON = function(factsheet) {
+					var arrFacts1 = Array();
+					var arrFacts2 = {};
+					for (var i=0; i<factsheet.factsheetDetails.length; i++) {
+						arrFacts2["id"] = null;
+						arrFacts2["sectionName"] = factsheet.factsheetDetails[i].sectionName;
+						arrFacts2["sectionDescription"] = factsheet.factsheetDetails[i].sectionDescription;
+						arrFacts1[i] = JSON.stringify(arrFacts2);
+					}
+					var arrFacts = cleanArrFacts(arrFacts1);
+					return JSON.stringify({
+						id: factsheet.id,
+						title: factsheet.title,
+						creationDate: factsheet.creationDate,
+						status: factsheet.status,
+						factsheetDetails: arrFacts
+					});
+				}
+				
+				var cleanArrFacts = function(arrFacts) {
+					var arrLength = arrFacts.length;
+					var finalArrFacts = Array();
+					for (var i=0; i<arrLength; i++) {
+						finalArrFacts[i] = JSON.parse(arrFacts[i]); 
+					}
+					return finalArrFacts;
+				}
+				
+				var setupFactsheetForm = function(factsheet) {
+					$('#btnListFactsheets').show();
+					deactivateMenuButtons();
+					$('#portlet-main-content').html(
+						'<div class="portlet">'+
+							'<div id="portlet-header" class="portlet-header"></div>' +
+								'<div id="portlet-content" class="portlet-content">' +
+									'<form id="frmFactsheet" role="form">' +
+										'<div class="form-group col-md-12"><label for="title">Title</label><input type="text" name="title" id="title" class="form-control"></div>' +
+										'<div class="form-group col-md-12"></div>' +
+									'</form>' +
+								'</div>' +
+							'</div>' +
+						'</div>'
+					);
+					if (factsheet != null) {
+						$('#portlet-header').html('<h3><i class="fa fa-file-text-o"></i> Create Fact Sheet</h3>');
+						$('#title').val(factsheet[0]);
+						$('#frmFactsheet div:last').append('<button type="submit" id="btnUpdate" class="btn btn-primary">Update</button><button id="btnClose" class="btn btn-primary" style="float: left">Close</button>');
+					} else {
+						$('#srv-portlet-header').html('<h3><i class="fa fa-file-text-o"></i> New Fact Sheet</h3>');
+						$('#frmFactsheet div:last').append('<button type="submit" id="btnSave" class="btn btn-primary">Save & New >></button>');
+					}
+					$('#btnSave').click(function() {
+						$('#frmFactsheet').validate({
+							rules: {
+								title: 'required'
+							},
+							submitHandler: function() {
+								console.log('Saving a factsheet...');
+								$.ajax({
+									type: 'POST',
+									contentType: 'application/json',
+									url: rootURL + 'factsheet',
+									data: factsheetFormToJSON(null),
+									dataType: 'json',
+									success: function(factsheet) {
+										$('#srv-portlet-header').html('<h3>'+$('#title').val().trim()+'</h3>');
+										$('#portlet-content').html(
+											'<div><button id="btnAddDetails" class="btn btn-primary">Add Facts</button></div>' +
+											'<div id="div-facts"></div>'
+										);
+										$('#btnAddDetails').click(function() {
+											setupFactsheetDetailsForm(factsheet.id, null);
+										});
+									},
+									error: function() {
+										toastr.error('Error saving factsheet');
+									}
+								});
+							},
+							invalidHandler: function(event, validator) {
+								displayFormInputError(event, validator);
+							}
+						});
+					});
+					$('#btnUpdate').click(function() {
+						$('#frmFactsheet').validate({
+							rules: {
+								title: 'required'
+							},
+							submitHandler: function() {
+								console.log('Updating factsheet...');
+								$.ajax({
+									type: 'PUT',
+									contentType: 'application/json',
+									url: rootURL + 'factsheet/'+ factsheet[3],
+									data: factsheetFormToJSON(factsheet[3]),
+									dataType: 'json',
+									success: function() {
+										toastr.success('Fact sheet updated successfully');
+									},
+									error: function() {
+										toastr.error('Error updating a fact sheet');
+									}
+								})
+							}
+						});
+					});
+				}
+				
+				var factsheetFormToJSON = function(factsheetId) {
+					return JSON.stringify({
+						id: factsheetId,
+						title: $('#title').val().trim()
+					})
+				}
+				
+				var setupDeleteFactsheet = function(factsheetId) {
+					var response = confirm('Are you sure you want to delete the factsheet?');
+					if (response == false) return false;
+					console.log('Deleting a factsheet...');
+					deleteFactsheet(factsheetId);
+				}
+				
+				var deleteFactsheet = function(factsheetId) {
+					$.ajax({
+						type: 'DELETE',
+						url: rootURL + 'factsheet/'+ factsheetId,
+						dataType: 'json',
+						statusCode: {
+							200: function() {
+								getAllFactsheets();
+							},
+							500: function() {
+								toastr.error('Error deleting a factsheet with id'+ factsheetId);
+							}
+						}
+					});
+				}
+				
+				var archiveFactsheet = function(factsheetId) {
+					var response = confirm('Are you sure you want to archive the fact sheet?');
+					if (response = false) return false;
+					console.log('Archiving a factsheet...');
+					updateFactsheet(factsheetId)
+				}
+				
+				var updateFactsheet = function(factsheetId, status) {
+					$.ajax({
+						type: 'PUT',
+						contentType: 'application/json',
+						url: rootURL + 'factsheet/'+ factsheetId + '/status/'+ status,
+						dataType: 'json',
+						success: function() {
+							switch (status) {
+							case Archived:
+								$('#status-'+factsheetId+' span').attr('class', 'label label-default').html(strStatus);
+								break;
+							case Published:
+								$('#status-'+factsheetId+' span').attr('class', 'label label-success').html(strStatus);
+								break;
+							}
+							$('#tr-'+factsheetId).removeClass('active').addClass('warning');
+							setupActions(factsheetId, status);
+						},
+						error: function() {
+							toastr.error('Error archiving a fact sheet');
+						}
+					});
+				}
+				
+				var getFactsheetById = function(factsheetId) {
+					console.log('Getting factsheet with id '+ factsheetId);
+					$.ajax({
+						type: 'GET',
+						url: rootURL + 'factsheet/'+ factsheetId,
+						dataType: 'json',
+						success: function(data) {
+							renderFactsheetDetailsList(data);
+						},
+						error: function() {
+							toastr.error('Error getting a fact sheet');
+						}
+					});
+				}
+				
+				var renderFactsheetDetailsList = function(factsheet) {
+					deactivateMenuButtons();
+					$('#btnListFactsheets').show();
+					$('#btnListFactsheets').click(function() {
+						getAllFactsheets();
+					});
+					
+					var factList = factsheet.factsheetDetails instanceof Array ? factsheet.factsheetDetails : [factsheet.factsheetDetails];
+					$('#portlet-main-content').html(
+						'<div><h2>'+factsheet.title+'</h2></div>' +
+						'<div><button id="btnNewFact" class="btn btn-primary"><i class="fa fa-plus"></i> Add New Fact</button></div>' +
+						'<div id="fact-list"></div>'
+					);
+					$('#btnNewFact').click(function() {
+						setupFactsheetDetailsForm(factsheet.uuid, null)
+					});
+					$.each(factList, function(index, fact) {
+						$('#fact-list').append(
+							'<div>'+
+								'&nbsp;&nbsp;&nbsp;<a href="#" id="btnEdit-'+fact.uuid+'"><i title="Edit Fact" class="fa fa-pencil fa-1x"></i> Edit</a>' +
+								'&nbsp;&nbsp;&nbsp;<a href="#" id="btnDelete-'+fact.uuid+'"><i title="Delete Fact" class="fa fa-trash-o fa-1x"></i> Delete</a>' +
+								'<h3>'+ fact.sectionName + '</h3>' +
+							'</div>' +
+							'<div>'+fact.sectionDescription+'</div>'
+						);
+						$('#btnEdit-'+fact.uuid).click(function() {
+							setupFactsheetDetailsForm(factsheet.uuid, fact)
+						});
+						$('#btnDelete-'+fact.uuid).click(function() {
+							var response = confirm('Are you sure you want to delete this fact?');
+							if (response == false) return false;
+							console.log('Deleting a factsheet detail...');
+							$.ajax({
+								type: 'DELETE',
+								url: rootURL +'factsheet/'+factsheet.uuid + '/details/'+ fact.uuid,
+								statusCode: {
+									200: function() {
+										getFactsheetById(factsheet.uuid);
+									},
+									500: function() {
+										toastr.error('Error deleting a fact...');
+									}
+								}
+							});
+						});
+					});
+				}
+				
+				var setupFactsheetDetailsForm = function(factsheetId, fact) {
+					$('.modal-title').html('Add Facts');
+					$('.modal-body').html(
+						'<form id="frmFacts" class="form" role="form">' +
+							'<div class="row">' +
+								'<div class="form-group col-md-12"><label for="title">Section Title</label><input type="text" name="title" id="title" class="form-control"></div>' +
+								'<div class="form-group col-md-12"><label for="description">Section Description</label><textarea name="description" id="description" class="form-control tinymce" rows="5"></textarea></div>' +
+								'<div class="form-group col-md-12"></div>' +
+							'</div>' +
+						'</form>'
+					);
+					applyTinyMCE();
+					if (fact != null) {
+						$('#title').val(fact.sectionName);
+						$('#description').val(fact.sectionDescription);
+						$('#frmFacts div:last').html(
+							'<button type="submit" id="btnUpdate" class="btn btn-primary">Update</button>' +
+							'<button id="btnClose" class="btn btn-primary" style="float: right">Close</button>'
+						);
+					} else {
+						$('#frmFacts div:last').html(
+							'<button type="submit" id="btnSave" class="btn btn-primary">Save & New</button>' +
+							'<button id="btnClose" class="btn btn-primary" style="float: right">Close</button>'
+						);
+					}
+					$('#modal_dialog').modal('show');
+					$('#btnSave').click(function() {
+						if ($('#description').val().trim() == '') {
+							toastr.error('Message description cannot be null');
+							return false;
+						}
+						$('#frmFacts').validate({
+							rules: {
+								title: 'required'
+							},
+							submitHandler: function() {
+								console.log('Saving fact sheet details...');
+								$.ajax({
+									type: 'POST',
+									contentType: 'application/json',
+									url: rootURL + 'factsheet/' + factsheetId + '/details',
+									dataType: 'json',
+									data: factsheetDetailsFormToJSON(null),
+									success: function() {
+										clearInput();
+										getFactsheetById(factsheetId);
+									},
+									error: function() {
+										toastr.error('Error saving fact sheet details');
+									}
+								});
+							},
+							invalidHandler: function(event, validator) {
+								displayFormInputError(event, validator);
+							}
+						})
+					});
+					$('#btnClose').click(function() {
+						closeModal();
+					});
+					$('#btnUpdate').click(function() {
+						if ($('#description').val().trim() == '') {
+							toastr.error('Message description cannot be null');
+							return false;
+						}
+						console.log('Updating fact sheet details...');
+						$('#frmFacts').validate({
+							rules: {
+								title: 'required'
+							},
+							submitHandler: function() {
+								$.ajax({
+									type: 'PUT',
+									contentType: 'application/json',
+									url: rootURL + 'factsheet/details/'+fact.uuid,
+									dataType: 'json',
+									data: factsheetDetailsFormToJSON(fact.uuid),
+									statusCode: {
+										200: function() {
+											getFactsheetById(factsheetId);
+											$('#modal_dialog').modal('hide');
+										},
+										500: function() {
+											toastr.error('Error updating fact sheet details');
+										}
+									}
+								});
+							},
+							invalidHandler: function(event, validator) {
+								displayFormInputError(event, validator);
+							}
+						});
+					});
+				}
+				
+				var factsheetDetailsFormToJSON = function(factsheetDetailsId) {
+					return JSON.stringify({
+						id: factsheetDetailsId,
+						sectionName: $('#title').val().trim(),
+						sectionDescription: $('#description').val().trim()
+					});
+				}
+			});
+		</script>
+	</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+	<head>
+		<meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Siyakhula Living Lab Health Information Resource</title>
+		<link rel="stylesheet" type="text/css" href="resources/font-awesome/css/font-awesome.min.css">
+		<link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+		<link rel="stylesheet" type="text/css" href="resources/js/bootstrap/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="resources/js/jquery-ui/css/ui-lightness/jquery-ui-1.9.2.custom.css">
+		<link rel="stylesheet" type="text/css" href="resources/css/toastr.css">
+		<link rel="stylesheet" type="text/css" href="resources/css/style.css">
+		<link rel="stylesheet" type="text/css" href="resources/css/simple.css">
+	</head>
+	<body>
+		<header>
+			<div id="header">
+				<section id="top" class="navbar navbar-inverse nav-justified navbar-fixed-top bs-docs-nav" role="banner" id="banner"></section>
+			</div>
+		</header>
+		<div id="content" class="container">
+			<div class="alert alert-danger hidden" role="alert"></div>
+			<div class="container">
+				<form id="frmLogin" class="form-horizontal" role="form">
+					<div class="form-group">
+				    	<label for="username" class="col-sm-3 col-sm-offset-2 control-label">User name</label>
+				    	<div class="col-sm-3"><input class="form-control" id="username" name="username" placeholder="User name"></div>
+				  	</div>
+				  	<div class="form-group">
+				    	<label for="password" class="col-sm-3 col-sm-offset-2 control-label">Password</label>
+				    	<div class="col-sm-3"><input type="password" class="form-control" id="password" name="password" placeholder="Password"></div>
+				  	</div>
+				 	<div class="form-group">
+				    	<div class="col-sm-3 col-sm-offset-5"><button type="submit" id="btnLogin" class="btn btn-default">Log in</button></div>
+				  	</div>
+				</form>	
+			</div>
+		</div>
+		<script type="text/javascript" src="resources/js/jquery-1.10.2.min.js"></script>
+		<script type="text/javascript" src="resources/js/jquery-ui/js/jquery-ui-1.9.2.custom.min.js"></script>
+		<script type="text/javascript" src="resources/js/bootstrap/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="resources/js/jquery.validate.min.js"></script>
+		<script type="text/javascript" src="resources/js/sha256.js"></script>
+		<script type="text/javascript" src="resources/js/enc-base64-min.js"></script>
+		<script type="text/javascript" src="resources/js/toastr.js"></script>
+		<script type="text/javascript" src="resources/js/jquery.cookie.js"></script>
+		<script type="text/javascript" src="resources/js/store.js"></script>
+		<script type="text/javascript" src="resources/js/util.js"></script>
+		<script type="text/javascript" src="resources/js/messenger.js"></script>
+		<script type="text/javascript">		
+			if (is_logged_in())
+				window.location = 'home/'
+			
+			$(function() {
+				// Submit form on enter
+				$('input').on('keydown', function (event) {
+				  if (event.keyCode === 13)
+				    $('#btnLogin').click()
+				})
+				
+				$('#frmLogin').validate({
+					rules: {
+						username: 'required',
+						passcode : 'required'
+					},
+					messages: {
+						loginName: '',
+						passcode: ''
+					},
+					submitHandler: function() {
+						login($('#username').val().trim(), $('#password').val().trim(), function(response, error) {
+							if (error) {
+// 								$(".alert-danger").removeClass("hidden").html("<strong>Error!</strong> " +  error.responseJSON.applicationMessage);
+								$(".alert-danger").removeClass("hidden").html("<strong>Error!</strong> ");
+								clearInput();
+								return false;
+							}
+							if (response.profileComplete)
+								window.location = 'home/';
+							else
+								window.location = 'update-profile/';
+						});
+					}
+				});
+			});			
+		</script>
+	</body>
+</html>

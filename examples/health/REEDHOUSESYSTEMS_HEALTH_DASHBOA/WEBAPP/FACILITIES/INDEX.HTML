@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+	<head>
+		<meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Health Messages Communication Website</title>
+		<link rel="stylesheet" type="text/css" href="../resources/font-awesome-4.0.3/css/font-awesome.min.css">
+		<link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+		<link rel="stylesheet" type="text/css" href="../resources/css/jquery.dataTables.css">
+		<link rel="stylesheet" type="text/css" href="../resources/js/bootstrap/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="../resources/js/jqueryui/css/ui-lightness/jquery-ui-1.9.2.custom.css">
+		<link rel="stylesheet" type="text/css" href="../resources/css/blue.css">
+		<link rel="stylesheet" type="text/css" href="../resources/css/new.css">
+		<link rel="stylesheet" type="text/css" href="../resources/css/toastr.css" />
+	</head>
+	<body>
+		<div class="modal fade" id="modal_dialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title"></h4>
+					</div>
+					<div class="modal-body"></div>
+					<div id="modal-footer" class="modal-footer hidden"></div>
+				</div>
+			</div>
+		</div>
+		<div id="wrapper">
+			<header id="header">
+				<a id="top-bar-toggle" class="navbar-toggle collapsed" data-target=".top-bar-collapse" data-toggle="collapse" href="javascript:;"><i class="fa fa-cog"></i></a>
+				<a id="sidebar-toggle" class="navbar-toggle collapsed" data-target=".sidebar-collapse" data-toggle="collapse" href="javascript:;"><i class="fa fa-reorder"></i></a>
+			</header>
+			<nav id="top-bar" class="collapse top-bar-collapse">
+				<ul class="nav navbar-nav pull-left">
+					<li><a href=""><i class="fa fa-home"></i>Home</a></li>
+				</ul>
+				<ul class="nav navbar-nav pull-right">
+					<li class="dropdown">
+						<a class="dropdown-toggle" href="javascript:;" data-toggle="dropdown"><i class="fa fa-user"></i> <span id="loggedAs"></span><span class="caret"></span></a>
+						<ul class="dropdown-menu" role="menu">
+							<li><a href="#" onClick="logout('../', '../home/');"><i class="fa fa-sign-out"></i>Logout</a></li>
+						</ul>
+					</li>
+				</ul>
+			</nav>
+			<div id="sidebar-wrapper" class="collapse sidebar-collapse">
+				<div id="search">
+					<form>
+						<input id="search" class="form-control input-sm" type="text" placeholder="Search..." name="search">
+						<button id="search-btn" class="btn" type="submit"><i class="fa fa-search"></i></button>
+					</form>
+				</div>
+				<nav id="sidebar">
+					<ul id="main-nav" class="open-active">
+						<li><a href="#"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+						<li><a href="../campaigns/"><i class="fa fa-bullhorn"></i> Campaigns</a></li>
+						<li><a href="../surveys/"><i class="fa fa-check-square-o"></i> Surveys</a></li>
+						<li><a href="../events/"><i class="fa fa-calendar"></i> Events</a></li>
+						<li><a href="../news/"><i class="fa fa-globe"></i> News</a></li>
+						<li><a href="../topics/"><i class="fa fa-file-text-o"></i> Health Topics</a></li>
+						<li class="active"><a href="../facilities/"><i class="fa fa-hospital-o"></i> Facilities</a></li>
+						<li><a href="../services/"><i class="fa fa-medkit"></i> Services</a></li>
+					</ul>
+				</nav>
+			</div>
+			<div id="content">
+				<div id="content-header"><h1>Dashboard</h1></div>
+				<div id="content-container">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="portlet">
+								<div id="srv-portlet-header"class="portlet-header"><h3><i class="fa fa-hospital-o"></i> Facilities</h3></div>
+								<div class="portlet-content">
+									<div class="bulk-function">
+										<span class="btn" id="btnAdd"><i class="fa fa-plus fa-lg"></i> Add</span>
+										<span class="btn hidden" id="btnDelete"><i class="fa fa-trash-o fa-lg"></i> Delete</span>
+										<span class="btn hidden" id="btnPublish"><i class="fa fa-upload fa-lg"></i> Publish</span>
+									</div>
+									<div id="portlet-main-content">
+										<div class="table-responsive">
+											<table id="tblFacilities" class="table table-striped table-bordered table-hover table-highlight table-checkable">
+												<thead>
+													<tr>
+														<th><input id="checkall" type="checkbox" class="icheck-all"></th>
+														<th>NAME</th>
+														<th>TYPE</th>
+														<th>PROVINCE</th>
+														<th>DISTRICT</th>					
+														<th>MUNICIPALITY</th>
+														<th>VILLAGE</th>
+														<th>ACTIONS</th>
+													</tr>
+												</thead>
+												<tbody></tbody>
+												<tfoot>
+													<tr>
+														<th><input class="form-control input-sm hide" type="text" placeholder=" "></th>
+														<th><input class="form-control input-sm show" type="text" placeholder="Name"></th>
+														<th><input class="form-control input-sm show" type="text" placeholder="Type"></th>
+														<th><input class="form-control input-sm show" type="text" placeholder="Province"></th>
+														<th><input class="form-control input-sm show" type="text" placeholder="District"></th>
+														<th><input class="form-control input-sm show" type="text" placeholder="Municipality"></th>
+														<th><input class="form-control input-sm show" type="text" placeholder="Village"></th>
+														<th><input class="form-control input-sm hide" type="text" placeholder=""></th>
+													</tr>
+												</tfoot>
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<footer class="bs-footer clearFix" role="contentinfo"><ul class="nav pull-right"><li> Copyright &copy; 2013, Healthcomm.ru.ac.za. </li></ul></footer>
+		<script type="text/javascript" src="../resources/js/jquery-1.10.2.min.js"></script>
+		<script type="text/javascript" src="../resources/js/jqueryui/js/jquery-ui-1.9.2.custom.min.js"></script>
+		<script type="text/javascript" src="../resources/js/bootstrap/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="../resources/js/jquery.dataTables.min.js"></script>
+		<script type="text/javascript" src="../resources/js/DT_bootstrap.js"></script>
+		<script type="text/javascript" src="../resources/js/paging.js"></script>
+		<script type="text/javascript" src="../resources/js/jquery.tableCheckable.js"></script>
+		<script type="text/javascript" src="../resources/js/jquery.icheck.min.js"></script>
+		<script type="text/javascript" src="../resources/js/toastr.js"></script>
+		<script type="text/javascript" src="../resources/js/jquery.validate.min.js"></script>
+		<script type="text/javascript" src="../resources/js/sha256.js"></script>
+		<script type="text/javascript" src="../resources/js/enc-base64-min.js"></script>
+		<script type="text/javascript" src="../resources/js/jquery.cookie.js"></script>
+		<script type="text/javascript" src="../resources/js/store.js"></script>
+		<script type="text/javascript" src="../resources/js/util.js"></script>
+		<script type="text/javascript" src="../resources/js/dashboard.js"></script>
+		<script type="text/javascript">		
+			if (!is_logged_in()) window.location = '../home/';
+			var storedUser = store.get('dashboard-currentUser')
+			if (storedUser) {
+				var user = JSON.parse(storedUser)
+				$('#loggedAs').html(' Logged in as ' + user.firstName + ' ' + user.lastName);
+			}			
+			$(function() {
+				var padding = "../";
+				getAuth(padding, 'facility', function(data, error) {
+					if (error) {
+						toastr.error("Error getting facilities");
+						return false;
+					}
+					renderFacilityList(data);
+				});
+				
+				var renderFacilityList = function(data) {
+					$("#tblFacilities tbody").empty();
+					var facilityList = data instanceof Array ? data : [data];
+					$.each(facilityList, function(index, facility) {
+						$('#tblFacilities tbody').append(
+							'<tr id="tr-'+ facility[3] +'">' +
+								'<td><input id="'+ facility[3] +'" class="icheck-input" type="checkbox"></td>' +
+								'<td>' + facility[0] + '</td>' +
+								'<td>' + facility[1] + '</td>' +
+								'<td>' + facility[2]["province"] + '</td>' +
+								'<td>' + facility[2]["district"] + '</td>' +
+								'<td>' + facility[2]["municipality"] + '</td>' +
+								'<td>' + facility[2]["village"] + '</td>' +
+								'<td class="actions">' +
+									'<span class="btn btn-xs btn-success" id="service-' + facility[3] + '"><i title="Add/Remove services" class="fa fa-stethoscope fa-1x"></i></span>' +
+									'<span class="btn btn-xs btn-info" id="update-' + facility[3] + '"><i title="Edit Facility" class="fa fa-pencil fa-1x"></i></span>' +
+									'<span class="btn btn-xs btn-danger" id="delete-' + facility[3] + '"><i title="Delete Facility" class="fa fa-trash-o fa-1x"></i></span>' +
+									'<span class="btn btn-xs btn-success" id="publish-' + facility[3] + '"><i title="Publish Facility" class="fa fa-upload fa-1x"></i></span>' +
+								'</td>' +
+							'</tr>'
+						);
+						$('#publish-' + facility[3]).click(function() {
+							var response = confirm('Are you sure you want to publish the facility?');
+							if (response == false) return false;
+							publishFacility(facility[3]);
+							toastr.success("Facility published succesfully");
+						});
+						$('#service-' + facility[3]).click(function() {
+							console.log('Getting services not offered by a facility with id ' + facility[3]);
+							get(padding, 'service/facility/' + facility[3] + '/notoffered', function(data, error) {
+								if (error) {
+									toastr.error("Error getting a facility");
+									return false;
+								}
+								$('.modal-title').text('Add/Remove services to a facility');
+								$('#modal-footer').attr('class', 'modal-footer hidden');
+								$('.modal-body').html(
+									'<div class="row">' +
+										'<div class="col-md-5"><select id="fromServices" class="form-control" multiple></select></div>' +
+										'<div class="col-md-2"><br /><br /><br /><br /><button id="btnAddService" class="btn btn-primary" style="width: 70px">>></button><br /><br /><button id="btnRemoveService" class="btn btn-primary" style="width: 70px"><<</button></div>' +
+										'<div class="col-dm-5"><select id="toServices" class="form-control" multiple></select></div>' +
+										'<div class="col-sm-12"><button type="submit" id="btnOk" class="btn btn-primary" style="width: 100px">Ok</button><button id="btnClose" data-dismiss="modal" class="btn btn-danger floatLeft" style="width: 100px">Close</button></div>' +
+									'</div>');
+								$('.modal-body select').css('width','230px').css('height','300px').css('margin-bottom', '20px');
+								$('.modal-body div').css('vertical-align', 'middle')
+								$('#modal_dialog').modal('show');
+								var serviceList = data instanceof Array ? data : [data];
+								$.each(serviceList, function(index, service) {
+									$("#fromServices").append('<option value="' + service.uuid + '">' + service.name + '</option>');
+								});
+								console.log('Getting services offered by a facility with id ' + facility[3]);
+								getAuth(padding, 'service/facility/' + facility[3], function(data, error) {
+									if (error) {
+										toastr.error('Error getting services offered by a facility');
+										return false;
+									}
+									var serviceList = data instanceof Array ? data : [data];
+									$.each(serviceList, function(index, service) {
+										$("#toServices").append('<option value="' + service.uuid + '">' + service.name + '</option>');
+									});
+								});														
+								$("#btnAddService").click(function() {
+									addServicesToAFacility();
+								});
+								$("#btnRemoveService").click(function() {
+									removeServicesFromAFacility();
+								});
+								$('#btnOk').click(function() {
+									$("#toServices option").attr('selected', 'selected');
+									var toServices = $('#toServices option:selected');
+									if (toServices.length != 0) {
+										$("#toServices option").each(function(index) {
+											putAuth(padding, 'service/facility/' + facility[3] + '/add', JSON.stringify({ id: $(this).val() }), function(data, error) {
+												if (error) {
+													toastr.error('Error adding services to a facility');
+													return false;
+												}
+											});
+										});
+										toServices.remove();
+									}
+									$("#fromServices option").attr('selected', 'selected');
+									var fromServices = $('#fromServices option:selected');
+									if (fromServices.length != 0) {
+										$("#fromServices option").each(function(index) {
+											console.log('Removing services from a facility with id ' + facility[3]);
+											putAuth(padding, 'service/facility/' + facility[3] + '/remove', JSON.stringify({ id: $(this).val() }), function(data, error) {
+												if (error) {
+													toastr.error('Error adding/removing services from a facility');
+													return false;
+												}
+											})
+										});
+										fromServices.remove();
+									}
+									$('#modal_dialog').modal('hide');
+								});
+							});
+						});
+						$("#update-" + facility[3]).click(function() {
+							$.cookie('facility-id', facility[3], { path: '/'});
+							window.location = "update-facility";		
+						});						
+						$("#delete-" + facility[3]).click(function() {
+							var response = confirm('Are you sure you want to delete the facility?');
+							if (response == false) return false;
+							console.log('Deleting a facility with id : ' + facility[3]);
+							deleteFacility(facility[3]);
+						});
+					});
+					facilitiesDataSettings();
+					$('.table-responsive select').on('change', function() {
+						facilitiesDataSettings();
+					});
+					$('.table-responsive ul li a').on('click', function() {
+						facilitiesDataSettings();
+					});
+					
+					$('#checkall').on('ifChecked', function(event){
+						$('.icheck-input').iCheck('check');
+					});
+					
+					$('#checkall').on('ifUnchecked', function(event){
+						$('.icheck-input').iCheck('uncheck');
+					});
+				}
+				
+				var facilitiesDataSettings = function() {
+					var oTable = $('#tblFacilities').dataTable( {
+						"bDestroy": true,
+					    "bRetrieve": true,
+						'aoColumnDefs': [
+						                 { "bSortable": false, "aTargets": [ 0, 7] }
+						],
+				        "aaSorting": [[3, 'desc']],
+				        "iDisplayLength": 10
+				    });
+					
+					$('.icheck-input').iCheck({
+						checkboxClass: 'icheckbox_minimal-blue'
+					});
+					
+					$('.icheck-all').iCheck({
+						checkboxClass: 'icheckbox_minimal-blue'
+					});
+				    
+					$('.dataTables_filter input').prop ('placeholder', 'Search...');
+				    
+				    $('tfoot input').keyup(function() {
+				    	oTable.fnFilter(this.value, $('tfoot input').index(this));
+				    });
+				}
+				
+				var facilityToJSON = function(facility) {
+					var arrServices1 = Array();
+					var arrServices2 = {};
+					for (var i=0; i<facility.services.length; i++) {
+						arrServices2["id"] = null;
+						arrServices2["uuid"] = facility.services[i].uuid;
+						arrServices2["name"] = facility.services[i].name;
+						arrServices2["description"] = facility.services[i].description;
+						arrServices2["type"] = facility.services[i].type;
+						arrServices2["status"] = facility.services[i].status;
+						arrServices1[i] = JSON.stringify(arrServices2);
+					}
+					var arrServices = cleanArrayServices(arrServices1);
+					return JSON.stringify({
+						id: facility.id,
+						uuid: facility.uuid,
+						name: facility.name,
+						type: facility.type,
+						status: facility.status,
+						address: {
+							province: facility.address.province,
+							district: facility.address.district,
+							municipality: facility.address.municipality,
+							village: facility.address.village
+						},
+						services: arrServices
+					});
+				}
+				
+				var cleanArrayServices = function(arrServices) {
+					var arrLength = arrServices.length;
+					var finalArrServices = Array();
+					for (var i=0; i<arrLength; i++) {
+						finalArrServices[i] = JSON.parse(arrServices[i]); 
+					}
+					return finalArrServices;
+				}
+				
+				var setFacilityStatus = function(facilityId, status) {
+					console.log("Updating facility details status...");
+					putAuth(padding, 'facility/'+facilityId+'/status/'+status, function(data, error) {
+						if (error) {
+							toastr.error('Error updating facility details status');
+							return false;
+						}
+						toastr.success('Facility details status successfully updated');
+					});
+				}
+				
+				var addServicesToAFacility = function() {
+					var fromServices = $('#fromServices option:selected');
+					if (fromServices.length == 0) {
+						alert('Please select services to add to a facility');
+						return false;
+					}
+					$("#toServices").append($(fromServices).clone());
+					fromServices.remove();
+				}
+				
+				var removeServicesFromAFacility = function() {
+					var toServices = $('#toServices option:selected');
+					if (toServices.length == 0) {
+						alert('Please select services to remove from a facility');
+						return false;
+					}
+					$("#fromServices").append($(toServices).clone());
+					toServices.remove();
+				}
+				
+				$('#btnAdd').click(function() {
+					window.location = "add-facility/";
+				});
+				
+				$('#btnDelete').click(function() {
+					var checked_checkboxes = $('.icheck-input:checked');
+					if (checked_checkboxes.length == 0) {
+						toastr.error('Please select facilities to delete');
+						return false;
+					}
+					var response = confirm('Are you sure you want to delete the selected facilities?');
+					if (response == false) return false;
+					checked_checkboxes.each(function(index) {
+						deleteFacility($(this).attr('id'));
+					});
+				});
+				
+				$("#btnPublish").click(function() {
+					var checked_checkboxes = $('.icheck-input:checked');
+					if (checked_checkboxes.length == 0) {
+						toastr.error('Please select facilities to publish');
+						return false;
+					}
+					var response = confirm('Are you sure you want to publish the selected facilities?');
+					if (response == false) return false;
+					checked_checkboxes.each(function(index) {
+						publishFacility($(this).attr('id'));
+					});
+					uncheckCheckboxes($('.table-responsive tbody td div'));
+					toastr.success("Facilities published succesfully");
+				});
+				
+				var publishFacility = function(facilityId) {
+					console.log('Getting information for facility with id '+ facilityId);
+					get(padding, 'facility/'+ facilityId, function(data, error) {
+						if (error) {
+							toastr.error('Error getting facility information')
+							return false;
+						}
+						console.log('Publishing facility information...');
+						post("", teleWeaverURL + 'service/facility', facilityToJSON(data), function(error) {
+							if (error) {
+								toastr.error('Error publishing facility information');
+								return false;
+							}
+						});
+					});
+				}
+				
+				var deleteFacility = function(facilityId) {
+					delAuth(padding, 'facility/' + facilityId, function(error) {
+						if (error) {
+							toastr.error("Error deleting a facility");
+							return false;
+						}
+						getAuth(padding, 'facility', function(data, error) {
+							if (error) {
+								toastr.error("Error getting facilities");
+								return false;
+							}
+							$('#tblFacilities').dataTable().fnDestroy();
+							renderFacilityList(data);
+						});
+					});
+				}
+			});			
+		</script>
+	</body>
+</html>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+	<session-factory>
+		<property name="connection.driver_class">com.mysql.jdbc.Driver</property>
+		<property name="connection.url">jdbc:mysql://localhost:3306/frontenddb</property>
+		<property name="connection.username">frontenduser</property>
+		<property name="connection.password">$3cr3t</property>
+		<property name="dialect">org.hibernate.dialect.MySQLDialect</property>
+		<!-- Show and print nice SQL on stdout -->
+		<property name="show_sql">true</property>
+		<property name="format_sql">true</property>
+		<!-- Use the C3P0 connection pool provider -->
+		<property name="hibernate.c3p0.min_size">5</property>
+		<property name="hibernate.c3p0.max_size">20</property>
+		<property name="hibernate.c3p0.timeout">300</property>
+		<property name="hibernate.c3p0.max_statements">50</property>
+		<property name="hibernate.c3p0.idle_test_period">3000</property>
+		<!-- List of annotated classes -->
+		<mapping class="com.reedhousesystems.services.core.health.messenger.model.Answer" />
+		<mapping class="com.reedhousesystems.services.core.health.messenger.model.AnswerOptions" />
+		<mapping class="com.reedhousesystems.services.core.health.messenger.model.Log" />
+		<mapping class="com.reedhousesystems.services.core.health.messenger.model.Campaign" />
+		<mapping class="com.reedhousesystems.services.core.health.messenger.model.Demographic" />
+		<mapping class="com.reedhousesystems.services.core.health.messenger.model.Event" />
+		<mapping class="com.reedhousesystems.services.core.health.messenger.model.Facility" />
+		<mapping class="com.reedhousesystems.services.core.health.messenger.model.Topic" />
+		<mapping class="com.reedhousesystems.services.core.health.messenger.model.TopicDetails" />
+		<mapping class="com.reedhousesystems.services.core.health.messenger.model.Location" />
+		<mapping class="com.reedhousesystems.services.core.health.messenger.model.Message" />
+		<mapping class="com.reedhousesystems.services.core.health.messenger.model.News" />
+		<mapping class="com.reedhousesystems.services.core.health.messenger.model.Occupation" />
+		<mapping class="com.reedhousesystems.services.core.health.messenger.model.Organisation" />
+		<mapping class="com.reedhousesystems.services.core.health.messenger.model.Question" />
+		<mapping class="com.reedhousesystems.services.core.health.messenger.model.Service" />
+		<mapping class="com.reedhousesystems.services.core.health.messenger.model.SessionToken" />
+		<mapping class="com.reedhousesystems.services.core.health.messenger.model.Survey" />
+		<mapping class="com.reedhousesystems.services.core.health.messenger.model.User" />
+		<mapping class="com.reedhousesystems.services.core.health.messenger.model.Target" />
+		<mapping class="com.reedhousesystems.services.core.health.messenger.model.VerificationToken" />
+	</session-factory>
+</hibernate-configuration>

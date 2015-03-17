@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+	<head>
+		<meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Siyakhula Living Lab Health Information Resource</title>
+		<link rel="stylesheet" type="text/css" href="../resources/css/font-awesome/css/font-awesome.min.css">
+		<link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+		<link rel="stylesheet" type="text/css" href="../resources/js/bootstrap/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="../resources/js/jquery-ui/css/ui-lightness/jquery-ui-1.9.2.custom.css">
+		<link rel="stylesheet" type="text/css" href="../resources/js/jquery_news_ticker/styles/ticker-style.css">
+		<link rel="stylesheet" type="text/css" href="../resources/css/style.css">
+		<link rel="stylesheet" type="text/css" href="../resources/css/toastr.css">
+		<link rel="stylesheet" type="text/css" href="../resources/css/simple.css">
+	</head>
+	<body>
+		<div class="modal fade" id="modal_dialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title"></h4>
+					</div>
+					<div class="modal-body"></div>
+					<div id="modal-footer" class="modal-footer hidden"></div>
+				</div>
+			</div>
+		</div>
+		<header>
+			<div id="header">
+				<section id="top" class="navbar navbar-inverse nav-justified navbar-fixed-top bs-docs-nav" role="banner" id="banner">
+					<div class="container">
+						<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+							<ul id="navigation" class="nav navbar-nav">
+								<li id="campaigns"><a href="../campaign/"><i class="fa fa-bullhorn fa-fw"></i> <strong lang="en">CAMPAIGNS</strong><span class="badge pull-right" id="campaign-number"></span></a></li>
+								<li id="surveys"><a href="../survey/"><i class="fa fa-check-square-o fa-fw"></i> <strong lang="en">SURVEYS</strong><span class="badge pull-right" id="survey-number"></span></a></li>
+								<li id="events"><a href="../event/"><i class="fa fa-calendar fa-fw"></i> <strong lang="en">EVENTS</strong><span class="badge pull-right" id="events-number"></span></a></li>
+								<li class="active"><a href=""><i class="fa fa-globe fa-fw"></i> <strong lang="en">NEWS</strong></a></li>
+								<li id="topics"><a href="../topic/"><i class="fa fa-comment fa-fw"></i> <strong lang="en">TOPICS</strong></a></li>
+								<li id="facilities_services"><a href="../service/#"><i class="fa fa-medkit fa-fw"></i> <strong lang="en">SERVICES</strong></a></li>
+							</ul>
+							<ul id="navigation" class="nav navbar-nav navbar-right">
+								<li class="dropdown">
+									<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> <span id="loggedinUserName"></span><b class="caret"></b></a>
+									<ul class="dropdown-menu" style="background-color: black;">
+										<li><a href="#lang-en" onclick="window.lang.change('en'); return false;">Switch to English</a></li>
+										<li><a href="#lang-en" onclick="window.lang.change('xh'); return false;">Switch to Xhosa</a></li>
+									</ul>
+								</li>
+							</ul>
+						</div>			
+					</div>
+				</section>
+				<section id="ticker">
+					<div class="container">
+						<ul id="ticker-titles" class="js-hidden"></ul>
+					</div>
+				</section>
+			</div>
+		</header>
+		<div id="content" class="container"><section id="section-news"></section></div>
+		<script type="text/javascript" src="../resources/js/jquery-1.10.2.min.js"></script>
+		<script type="text/javascript" src="../resources/js/jquery-ui/js/jquery-ui-1.9.2.custom.min.js"></script>
+		<script type="text/javascript" src="../resources/js/bootstrap/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="../resources/js/jquery_news_ticker/includes/jquery.ticker.js"></script>
+		<script type="text/javascript" src="../resources/js/sha256.js"></script>
+		<script type="text/javascript" src="../resources/js/enc-base64-min.js"></script>
+		<script type="text/javascript" src="../resources/js/store.js"></script>
+		<script type="text/javascript" src="../resources/js/toastr.js"></script>
+		<script type="text/javascript" src="../resources/js/jquery.validate.min.js"></script>
+		<script type="text/javascript" src="../resources/js/util.js"></script>
+		<script type="text/javascript" src="../resources/js/jquery-lang.js" charset="utf-8"></script>
+		<script type="text/javascript" src="../resources/js/jquery.cookie.js"></script>
+		<script type="text/javascript" src="../resources/js/nonDynamic.js" charset="utf-8"></script>
+		<script type="text/javascript" src="../resources/js/truncate.js"></script>
+		<script type="text/javascript" src="../resources/js/messenger.js"></script>
+		<script type="text/javascript">
+			if (!is_logged_in())
+				window.location = 'http://localhost:8080/health-profile';
+			/* Create language switcher instance and set default language to en */
+			window.lang = new Lang('en');		
+			$(document).ready(function () {
+				var theUser = store.get('currentUser')
+				if (theUser) {
+					var theCurrentUser = JSON.parse(theUser);
+					console.log(theCurrentUser.firstName + ' ' + theCurrentUser.lastName)
+					$('#loggedinUserName').html(theCurrentUser.firstName + ' ' + theCurrentUser.lastName)
+				}
+				var padding = "../";
+				$("#ticker-titles").empty();
+				getAuth(padding, "log/title", function(data, error) {
+					if (error) {
+						toastr.error("Error getting health information");
+						return false;
+					}
+					var titleList = data instanceof Array ? data : [data];
+					$.each(titleList, function(index, item) {
+						$("#ticker-titles").append("<li>" + item.title + "</li>");
+					});
+					$("#ticker-titles").ticker({ titleText: 'Your health information' });
+				});
+				getAuth(padding, 'new', function(data, error) {
+					if (!error) {
+						$('#section-news').empty();
+				    	var newsList = data instanceof Array ? data : [data];
+						var regex = /(<([^>]+)>)/ig;
+				    	$.each(newsList, function(index, news) {
+				    		$('#section-news').append(
+			    				'<a href="#" id="' + news.id + '"><h4>' + news.title + '</h4></a>' +
+			    				'<strong>By: ' + news.author + '</strong>' +
+				    			'<article>' +
+				    				'<p>' + news.content + '</p>' +
+				    			'</article>'
+				    		);
+					    	$("a#" + news.id).click(function() {
+					    		console.log("The id is " + news.id);
+					    		$.cookie('messenger-news-id', news.id, { path: '/'} );
+					    		window.location = "view-news/";
+					    	});
+				    	});
+						$('article').truncate({
+							lines: 10,
+							lineHeight: 10
+						});
+					} else {
+						toastr.error('Error getting news articles');
+					}
+				});
+				var displayDetails = function(newsId) {
+					console.log("The id is " + news.id);
+		    		$.cookie('messenger-news-id', news.id, { path: '/'} );
+		    		window.location = "view-news/";
+				}
+			});
+			
+		</script>
+	</body>
+</html>

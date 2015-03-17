@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+	<head>
+		<meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Siyakhula Living Lab Health Information Resource</title>
+		<link rel="stylesheet" type="text/css" href="../resources/js/bootstrap/css/bootstrap.min.css">
+		<link rel="stylesheet" href="../resources/font-awesome/css/font-awesome.min.css">
+		<link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+		<link rel="stylesheet" type="text/css" href="../resources/js/jquery-ui/css/ui-lightness/jquery-ui-1.9.2.custom.css">
+		<link href="../resources/css/pnotify.custom.min.css" media="all" rel="stylesheet" type="text/css" />
+		<link rel="stylesheet" type="text/css" href="../resources/css/style.css">
+		<link rel="stylesheet" type="text/css" href="../resources/css/simple.css">
+	</head>
+	<body>		
+		<header>
+			<div id="header">
+				<section id="top" class="navbar navbar-inverse nav-justified navbar-fixed-top bs-docs-nav" role="banner" id="banner">
+					<div class="container">
+						<ul id="navigation" class="nav navbar-nav navbar-right">
+							<li class="dropdown">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> <span id="loggedinUserName"></span><b class="caret"></b></a>
+								<ul class="dropdown-menu" style="background-color: black;">
+									<li><a href="#" onClick="window.location = '../update-profile/';"><i class="fa fa-user"></i> <span lang="en">Profile</span></a></li>
+									<li><a href="#" onClick="setChangePasswordForm();"><i class="fa fa-key"></i> <span lang="en">Change Password</span></a></li>
+									<li><a href="#" onClick="logout('../', '../');"><i class="fa fa-sign-out"></i> <span lang="en">Logout</span></a></li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+				</section>
+			</div>
+		</header>
+		<div id="content" class="container">
+			<div class="alert alert-success alert-dismissible text-center" role="alert">
+			  <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+			  <strong>Welcome! <span id="logged-user"></span></strong> You have logged in successfully. Click <a href="http://146.231.123.109:8080/health-messenger/campaign/">here</a> to access health information.
+			</div>
+		</div>
+		<script type="text/javascript" src="../resources/js/jquery-1.10.2.min.js"></script>
+		<script type="text/javascript" src="../resources/js/jquery-ui/js/jquery-ui-1.9.2.custom.min.js"></script>
+		<script type="text/javascript" src="../resources/js/bootstrap/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="../resources/js/sha256.js"></script>
+		<script type="text/javascript" src="../resources/js/enc-base64-min.js"></script>
+		<script type="text/javascript" src="../resources/js/jquery.validate.min.js"></script>
+		<script type="text/javascript" src="../resources/js/store.js"></script>
+		<script type="text/javascript" src="../resources/js/jquery.cookie.js"></script>
+		<script type="text/javascript" src="../resources/js/pnotify.custom.min.js"></script>
+		<script type="text/javascript" src="../resources/js/util.js"></script>
+		<script type="text/javascript" src="../resources/js/messenger.js"></script>
+		<script type="text/javascript">
+			var theUser = store.get('currentUser')
+			if (theUser) {
+				var theCurrentUser = JSON.parse(theUser);
+				$('#loggedinUserName').html(theCurrentUser.firstName + ' ' + theCurrentUser.lastName)
+				$("#logged-user").html(theCurrentUser.firstName + ' ' + theCurrentUser.lastName);
+			}
+			
+			$(function() {
+				var padding = "../../health-messenger/";
+				getAuth(padding, "log", function(data, error) {
+					if (error) {
+						
+					}
+					PNotify.desktop.permission();
+					var stack_bottomleft = {"dir1": "right", "dir2": "up", "push": "top"};
+					(new PNotify({
+					    title: 'Welcome!' + theCurrentUser.firstName + ' ' + theCurrentUser.lastName,
+					    text: 'A ' + data.type + ' entitled ' + data.name + ' has been developed for you. Please click on on this message to view it',
+				    	styling: 'fontawesome',
+				    	min_height: "300px",
+				    	width: "600px",
+					    hide: false,
+				        addclass: "stack-bottomleft",
+				        stack: stack_bottomleft,
+					    desktop: {
+					        desktop: true
+					    }
+					})).get().click(function(e) {
+					    if ($('.ui-pnotify-closer, .ui-pnotify-sticker, .ui-pnotify-closer *, .ui-pnotify-sticker *').is(e.target)) return;
+					    window.location="http://146.231.123.109:8080/health-messenger/" + data.type;
+					});
+				});
+			});
+		</script>
+	</body>
+</html>

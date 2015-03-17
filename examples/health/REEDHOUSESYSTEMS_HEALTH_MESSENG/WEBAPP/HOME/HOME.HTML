@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+	<head>
+		<meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Siyakhula Living Lab Health Information Resource</title>
+		<link rel="stylesheet" type="text/css" href="../resources/js/font-awesome/css/font-awesome.min.css">
+		<link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+		<link rel="stylesheet" type="text/css" href="../resources/js/bootstrap/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="../resources/js/jquery-ui/css/ui-lightness/jquery-ui-1.9.2.custom.css">
+		<link rel="stylesheet" type="text/css" href="../resources/css/toastr.css">
+		<link rel="stylesheet" type="text/css" href="../resources/css/style.css">
+		<link rel="stylesheet" type="text/css" href="../resources/css/simple.css">
+	</head>
+	<body>
+		<div class="modal fade" id="modal_dialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title"></h4>
+					</div>
+					<div class="modal-body"></div>
+					<div id="modal-footer" class="modal-footer hidden"></div>
+				</div>
+			</div>
+		</div>
+		<header>
+			<div id="header">
+				<section id="top" class="navbar navbar-inverse nav-justified navbar-fixed-top bs-docs-nav" role="banner" id="banner">
+					<div class="container">
+						<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+							<ul id="navigation" class="nav navbar-nav">
+								<li id="home" class="active"><a href=""><i class="fa fa-home fa-fw"></i> <strong lang="en">HOME</strong></a></li>
+								<li id="topics"><a href="../topic/topic.html"><i class="fa fa-comment fa-fw"></i> <strong lang="en">TOPICS</strong></a></li>
+								<li id="news"><a href="../news/news.html"><i class="fa fa-globe fa-fw"></i> <strong lang="en">NEWS</strong></a></li>
+								<li id="facilities_services"><a href="../service/services.html"><i class="fa fa-medkit fa-fw"></i> <strong lang="en">SERVICES</strong></a></li>
+								<li id="events"><a href="../event/events.html"><i class="fa fa-calendar fa-fw"></i> <strong lang="en">EVENTS</strong><span class="badge pull-right" id="events-number"></span></a></li>
+								<li>
+									<form id="frmUserLogin" class="navbar-form">
+										<div class="form-group">
+											<input type="text" name="loginName" id="loginName" class="form-control" placeholder="Username">
+										</div>
+										<div class="form-group">
+											<input type="password" name="passcode" id="passcode" class="form-control" placeholder="Password">
+										</div>
+										<button type="submit" id="btnUserLogin" class="btn btn-primary">Log In</button>
+									</form>
+								</li>
+							</ul>
+							<ul class="nav navbar-nav navbar-right">
+								<li class="dropdown">
+									<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-language"></i><b class="caret"></b></a>
+									<ul class="dropdown-menu" style="background-color: black;">
+										<li><a href="#lang-en" onclick="window.lang.change('en'); return false;">Switch to English</a></li>
+										<li><a href="#lang-en" onclick="window.lang.change('xh'); return false;">Switch to Xhosa</a></li>
+									</ul>
+								</li>
+							</ul>
+						</div>			
+					</div>
+				</section>
+			</div>
+		</header>
+		<div id="content" class="container"><section id="section-topics"></section></div>
+		<script type="text/javascript" src="../resources/js/jquery-1.10.2.min.js"></script>
+		<script type="text/javascript" src="../resources/js/jquery-ui/js/jquery-ui-1.9.2.custom.min.js"></script>
+		<script type="text/javascript" src="../resources/js/bootstrap/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="../resources/js/jquery.validate.min.js"></script>
+		<script type="text/javascript" src="../resources/js/sha256.js"></script>
+		<script type="text/javascript" src="../resources/js/enc-base64-min.js"></script>
+		<script type="text/javascript" src="../resources/js/toastr.js"></script>
+		<script type="text/javascript" src="../resources/js/jquery-lang.js" charset="utf-8"></script>
+		<script type="text/javascript" src="../resources/js/nonDynamic.js" charset="utf-8"></script>
+		<script type="text/javascript" src="../resources/js/jquery.cookie.js"></script>
+		<script type="text/javascript" src="../resources/js/store.js"></script>
+		<script type="text/javascript" src="../resources/js/util.js"></script>
+		<script type="text/javascript" src="../resources/js/messenger.js"></script>
+		<script type="text/javascript">
+			/* Create language switcher instance and set default language to en */
+			window.lang = new Lang('en');
+		
+			if (is_logged_in())
+				window.location = 'index.html'
+			
+			$(function() {
+				// Submit form on enter
+				$('input').on('keydown', function (event) {
+				  if (event.keyCode === 13)
+				    $('#btnUserLogin').click()
+				})
+				
+				$('#btnUserLogin').click(function () {
+					$('#frmUserLogin').validate({
+						rules: {
+							loginName: 'required',
+							passcode : 'required'
+						},
+						messages: {
+							loginName: '',
+							passcode: ''
+						},
+						submitHandler: function() {
+							login($('#loginName').val().trim(), $('#passcode').val().trim(), function(response, error) {
+								if (error) {
+									toastr.error(error.responseJSON.applicationMessage);
+									clearInput();
+									return false;
+								}
+								if (response.profileComplete)
+									window.location = 'index.html';
+								else
+									window.location = 'update-profile/';
+							});
+						}
+					});
+				});
+			});			
+		</script>
+	</body>
+</html>

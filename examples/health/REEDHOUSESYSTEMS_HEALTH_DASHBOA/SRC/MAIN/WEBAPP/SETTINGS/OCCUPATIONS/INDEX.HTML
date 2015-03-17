@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+	<head>
+		<meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Health Messages Communication Website</title>
+		<link rel="stylesheet" type="text/css" href="../../resources/font-awesome-4.0.3/css/font-awesome.min.css">
+		<link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+		<link rel="stylesheet" type="text/css" href="../../resources/css/jquery.dataTables.css">
+		<link rel="stylesheet" type="text/css" href="../../resources/js/bootstrap/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="../../resources/js/jqueryui/css/ui-lightness/jquery-ui-1.9.2.custom.css">
+		<link rel="stylesheet" type="text/css" href="../../resources/css/blue.css">
+		<link rel="stylesheet" type="text/css" href="../../resources/css/new.css">
+		<link rel="stylesheet" type="text/css" href="../../resources/css/toastr.css" />
+	</head>
+	<body>
+		<div class="modal fade" id="modal_dialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title"></h4>
+					</div>
+					<div class="modal-body"></div>
+					<div id="modal-footer" class="modal-footer hidden"></div>
+				</div>
+			</div>
+		</div>
+		<div id="wrapper">
+			<header id="header">
+				<a id="top-bar-toggle" class="navbar-toggle collapsed" data-target=".top-bar-collapse" data-toggle="collapse" href="javascript:;"><i class="fa fa-cog"></i></a>
+				<a id="sidebar-toggle" class="navbar-toggle collapsed" data-target=".sidebar-collapse" data-toggle="collapse" href="javascript:;"><i class="fa fa-reorder"></i></a>
+			</header>
+			<nav id="top-bar" class="collapse top-bar-collapse">
+				<ul class="nav navbar-nav pull-left">
+					<li class=""><a href=""><i class="fa fa-home"></i>Home</a></li>
+				</ul>
+				<ul class="nav navbar-nav pull-right">
+					<li class="dropdown">
+						<a class="dropdown-toggle" href="javascript:;" data-toggle="dropdown"><i class="fa fa-user"></i> <span id="loggedAs"></span><span class="caret"></span></a>
+						<ul class="dropdown-menu" role="menu">
+							<li><a href="#" onClick="logout('../../', '../home/');"><i class="fa fa-sign-out"></i>Logout</a></li>
+						</ul>
+					</li>
+				</ul>
+			</nav>
+			<div id="sidebar-wrapper" class="collapse sidebar-collapse">
+				<div id="search">
+					<form>
+						<input id="search" class="form-control input-sm" type="text" placeholder="Search..." name="search">
+						<button id="search-btn" class="btn" type="submit"><i class="fa fa-search"></i></button>
+					</form>
+				</div>
+				<nav id="sidebar">
+					<ul id="main-nav" class="open-active">
+						<li><a href="#"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+						<li><a href="../campaigns/"><i class="fa fa-bullhorn"></i> Campaigns</a></li>
+						<li><a href="../surveys/"><i class="fa fa-check-square-o"></i> Surveys</a></li>
+						<li><a href="../events/"><i class="fa fa-calendar"></i> Events</a></li>
+						<li><a href="../news/"><i class="fa fa-globe"></i> News</a></li>
+						<li><a href="../topics/"><i class="fa fa-file-text-o"></i> Health Topics</a></li>
+						<li><a href="../facilities/"><i class="fa fa-hospital-o"></i> Facilities</a></li>
+						<li><a href="../services/"><i class="fa fa-medkit"></i> Services</a></li>
+						<li><a href="../users/"><i class="fa fa-user"></i>Users</a></li>
+						<li><a href="../organisations/"><i class="fa fa-h-square"></i>Organisations</a></li>
+						<li><a href="../servicetype/"><i class="fa fa-ambulance"></i> Service Types</a></li>
+						<li><a href="../locations/"><i class="fa fa-map-marker"></i> Locations</a></li>
+						<li class="active"><a href="#"><i class="fa fa-briefcase"></i> Occupations</a></li>
+					</ul>
+				</nav>
+			</div>
+			<div id="content">
+				<div id="content-header"><h1>Dashboard Settings</h1></div>
+				<div id="content-container">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="portlet">
+								<div id="srv-portlet-header"class="portlet-header"><h3><i class="fa fa-briefcase"></i> Occupations</h3></div>
+								<div class="portlet-content">
+									<div>
+										<span class="btn" id="btnAdd" onClick="window.location='add-occupation/'"><i class="fa fa-plus fa-lg"></i> Add</span>
+										<span class="btn" id="btnDelete"><i class="fa fa-trash-o fa-lg"></i> Delete</span>
+										<span class="btn" id="btnPublish"><i class="fa fa-upload fa-lg"></i> Publish</span>
+									</div>
+									<div id="portlet-main-content">
+										<div class="table-responsive">
+											<table id="tblOccupations" class="table table-striped table-bordered table-hover table-highlight table-checkable">
+												<thead>
+													<tr>
+														<th><input id="checkall" type="checkbox" class="icheck-all"></th>
+														<th>NAME</th>
+														<th>DESCRIPTION</th>
+														<th>ACTIONS</th>
+													</tr>
+												</thead>
+												<tbody></tbody>
+												<tfoot>
+													<tr>
+														<th><input class="form-control input-sm hide" type="text" placeholder=""></th>
+														<th><input class="form-control input-sm show" type="text" placeholder="Name"></th>
+														<th><input class="form-control input-sm show" type="text" placeholder="Description"></th>
+														<th><input class="form-control input-sm hide" type="text" placeholder=""></th>
+													</tr>
+												</tfoot>
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<footer class="bs-footer clearFix" role="contentinfo"><ul class="nav pull-right"><li> Copyright &copy; 2014, Healthcomm.ru.ac.za. </li></ul></footer>
+		<script type="text/javascript" src="../../resources/js/jquery-1.10.2.min.js"></script>
+		<script type="text/javascript" src="../../resources/js/jqueryui/js/jquery-ui-1.9.2.custom.min.js"></script>
+		<script type="text/javascript" src="../../resources/js/bootstrap/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="../../resources/js/jquery.dataTables.min.js"></script>
+		<script type="text/javascript" src="../../resources/js/DT_bootstrap.js"></script>
+		<script type="text/javascript" src="../../resources/js/paging.js"></script>
+		<script type="text/javascript" src="../../resources/js/jquery.icheck.min.js"></script>
+		<script type="text/javascript" src="../../resources/js/toastr.js"></script>
+		<script type="text/javascript" src="../../resources/js/sha256.js"></script>
+		<script type="text/javascript" src="../../resources/js/enc-base64-min.js"></script>
+		<script type="text/javascript" src="../../resources/js/jquery.cookie.js"></script>
+		<script type="text/javascript" src="../../resources/js/store.js"></script>
+		<script type="text/javascript" src="../../resources/js/util.js"></script>
+		<script type="text/javascript" src="../../resources/js/dashboard.js"></script>
+		<script type="text/javascript" src="../../resources/js/admin-menu.js"></script>
+		<script type="text/javascript">		
+			if (!is_logged_in()) window.location = '../home/';
+			var storedUser = store.get('dashboard-currentUser')
+			if (storedUser) {
+				var user = JSON.parse(storedUser)
+				$('#loggedAs').html(' Logged in as ' + user.firstName + ' ' + user.lastName);
+			}			
+			$(function() {
+				var padding = "../../";
+				getAuth(padding, "occupation", function(data, error) {
+					if (error) {
+						toastr.error('Error getting all locations');
+						return false;
+					}
+					renderOccupationList(data);
+				});
+
+				var renderOccupationList = function(data) {
+					$("#tblOccupations tbody").empty();
+					var occupationList = data instanceof Array ? data : [data];
+					$.each(occupationList, function(index, occupation) {
+						$('#tblOccupations tbody').append(
+							'<tr id="tr-'+ occupation.id +'">' +
+								'<td><input id="'+ occupation.id +'" class="icheck-input" type="checkbox"></td>' +
+								'<td>' + occupation.name + '</td>' +
+								'<td>' + occupation.description + '</td>' +
+								'<td class="actions">' +
+									'<span class="btn btn-xs btn-info" id="update-' + occupation.id + '"><i title="Edit occupation" class="fa fa-pencil fa-1x"></i></span>' +
+									'<span class="btn btn-xs btn-danger" id="delete-' + occupation.id + '"><i title="Delete occupation" class="fa fa-trash-o fa-1x"></i></span>' +
+								'</td>' +
+							'</tr>'
+						);
+						$("#update-" + occupation.id).click(function() {
+							$.cookie('occupation-id', occupation.id, { path : '/'} );
+							window.location = "update-occupation/";
+						});
+						$("#delete-" + occupation.id).click(function() {
+							var response = confirm('Are you sure you want to delete the occupation?');
+							if (response == false) return false;
+							console.log('Deleting a occupation with id ' + occupation.id);
+							deleteOccupation(occupation.id);
+						});	
+					});
+					occupationDatatableSettings();
+					$('.table-responsive select').on('change', function() {
+						occupationDatatableSettings();
+					});
+					$('.table-responsive ul li a').on('click', function() {
+						occupationDatatableSettings();
+					});
+					$('#checkall').on('ifChecked', function(event){
+						$('.icheck-input').iCheck('check');
+					});
+					
+					$('#checkall').on('ifUnchecked', function(event){
+						$('.icheck-input').iCheck('uncheck');
+					});	
+				}
+				
+				var occupationDatatableSettings = function() {
+					var oTable = $('#tblOccupations').dataTable( {
+						"bDestroy": true,
+					    "bRetrieve": true,
+						'aoColumnDefs': [
+						                 { "bSortable": false, "aTargets": [ 0, 3] }
+						],
+				        "aaSorting": [[1, 'asc']],
+				        "iDisplayLength": 10
+				    });
+					
+					$('.icheck-input').iCheck({
+						checkboxClass: 'icheckbox_minimal-blue'
+					});
+					
+					$('.icheck-all').iCheck({
+						checkboxClass: 'icheckbox_minimal-blue'
+					});
+				    
+					$('.dataTables_filter input').prop ('placeholder', 'Search...');
+				    
+				    $('tfoot input').keyup(function() {
+				    	oTable.fnFilter(this.value, $('tfoot input').index(this));
+				    });
+				}
+				
+				$('#btnDelete').click(function() {
+					var checked_checkboxes = $('.icheck-input:checked');
+					if (checked_checkboxes.length == 0) {
+						toastr.error('Please select occupations to delete');
+						return false;
+					}
+					var response = confirm('Are you sure you want to delete the selected occupations?');
+					if (response == false) return false;
+					checked_checkboxes.each(function(index) {
+						deleteOccupation($(this).attr('id'));
+					});
+				});
+				
+				var deleteOccupation = function(occupationId) {
+					delAuth(padding, 'occupation/' + occupationId, function(error) {
+						if (error) {
+							toastr.error('Error deleting a occupation');
+							return false;
+						}
+						getAuth(padding, "occupation", function(data, error) {
+							if (error) {
+								toastr.error('Error getting all locations');
+								return false;
+							}
+							$('#tblOccupations').dataTable().fnDestroy();
+							renderOccupationList(data);
+						});
+					});
+				}
+				
+				$("#btnPublish").click(function() {
+					var checked_checkboxes = $('.icheck-input:checked');
+					if (checked_checkboxes.length == 0) {
+						toastr.error('Please select occupations to publish');
+						return false;
+					}
+					var response = confirm('Are you sure you want to publish the selected occupations?');
+					if (response == false) return false;
+					checked_checkboxes.each(function(index) {
+						get(padding, 'occupation/'+ $(this).attr('id'), function(data, error) {
+							if (error) {
+								toastr.error('Error getting occupation information')
+								return false;
+							}
+							console.log('Publishing occupation information...');
+							post("", teleWeaverURL + 'occupation', occupationToJSON(data), function(error) {
+								if (error) {
+									toastr.error('Error publishing occupation information');
+									return false;
+								}
+							});
+						});
+					});
+					uncheckCheckboxes($('.table-responsive tbody td div'));
+				});
+				
+				var occupationToJSON = function(occupation) {
+					return JSON.stringify({
+						id: occupation.id,
+						name : occupation.name,
+						description : occupation.description
+					});
+				}
+			});			
+		</script>
+	</body>
+</html>

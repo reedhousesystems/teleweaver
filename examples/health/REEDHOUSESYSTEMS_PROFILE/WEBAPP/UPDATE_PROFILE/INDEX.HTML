@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+	<head>
+		<meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Siyakhula Living Lab Health Information Resource</title>
+		<link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+		<link rel="stylesheet" type="text/css" href="../resources/js/bootstrap/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="../resources/js/jquery-ui/css/ui-lightness/jquery-ui-1.9.2.custom.css">
+		<link rel="stylesheet" type="text/css" href="../resources/css/ticker-style.css">
+		<link rel="stylesheet" type="text/css" href="../resources/css/toastr.css">
+		<link rel="stylesheet" type="text/css" href="../resources/css/style.css">
+		<link rel="stylesheet" type="text/css" href="../resources/css/simple.css">
+	</head>
+	<body>
+		<div class="modal fade" id="modal_dialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title"></h4>
+					</div>
+					<div class="modal-body"></div>
+					<div id="modal-footer" class="modal-footer hidden"></div>
+				</div>
+			</div>
+		</div>
+		<header>
+			<div id="header">
+				<section id="top" class="navbar navbar-inverse nav-justified navbar-fixed-top bs-docs-nav" role="banner" id="banner">
+					<div class="container">
+						<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+							<ul id="navigation" class="nav navbar-nav">
+								<li id="home" class="active"><a href=""><i class="fa fa-home fa-fw"></i> <strong>HOME</strong></a></li>
+							</ul>
+							<ul id="navigation" class="nav navbar-nav navbar-right">
+								<li class="dropdown">
+									<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user fa-fw"></i> <span id="loggedinUserName"></span><b class="caret"></b></a>
+									<ul class="dropdown-menu" style="background-color: black;">
+										<li><a href="#" onClick="logout('../', '../');"><i class="fa fa-sign-out fa-fw"></i> Logout</a></li>
+									</ul>
+								</li>
+							</ul>
+						</div>			
+					</div>
+				</section>
+				<section id="news-ticker">
+					<div class="container">
+						<ul id="js-news" class="js-hidden"></ul>
+					</div>
+				</section>
+			</div>
+		</header>
+		<div id="update-profile" class="container">
+			<span><h1>Update Profile</h1></span>
+			<form id="frmProfile" role="form">
+				<div class="form-group col-md-12"><label for="sex">Gender</label><select name="sex" id="sex" class="form-control"></select></div>
+				<div class="form-group col-md-12"><label for="dateOfBirth">Date of Birth</label><input type="text" name="dateOfBirth" id="dateOfBirth" class="form-control"></div>
+				<div class="form-group col-md-12"><label for="occupation">Occupation</label><select name="occupation" id="occupation" class="form-control"></select></div>
+				<div class="form-group col-md-12"><label for="maritalStatus">Marital Status</label><select name="maritalStatus" id="maritalStatus" class="form-control"></select></div>
+				<div class="form-group col-md-12"><label for="sexOrientation">Sex Orientation</label><select name="sexOrientation" id="sexOrientation" class="form-control"></select></div>
+				<div class="form-group col-md-12"><label for="language">Language</label><select name="language" id="language" class="form-control"></select></div>
+				<div class="form-group col-md-12"><label for="province">Province</label><select name="province" id="province" class="form-control"></select></div>
+				<div class="form-group col-md-12"><label for="district">District</label><select name="district" id="district" class="form-control"></select></div>
+				<div class="form-group col-md-12"><label for="municipality">Municipality</label><select name="municipality" id="municipality" class="form-control"></select></div>
+				<div class="form-group col-md-12"><label for="village">Village</label><select name="village" id="village" class="form-control"></select></div>
+				<div class="form-group col-md-12"><button type="submit" id="btnSave" class="btn btn-primary long-button">Save</button></div>
+			</form>
+		</div>
+		<script type="text/javascript" src="../resources/js/jquery-1.10.2.min.js"></script>
+		<script type="text/javascript" src="../resources/js/jquery-ui/js/jquery-ui-1.9.2.custom.min.js"></script>
+		<script type="text/javascript" src="../resources/js/bootstrap/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="../resources/js/jquery.validate.min.js"></script>
+		<script type="text/javascript" src="../resources/js/sha256.js"></script>
+		<script type="text/javascript" src="../resources/js/enc-base64-min.js"></script>
+		<script type="text/javascript" src="../resources/js/toastr.js"></script>
+		<script type="text/javascript" src="../resources/js/store.js"></script>
+		<script type="text/javascript" src="../resources/js/jquery.cookie.js"></script>
+		<script type="text/javascript" src="../resources/js/util.js"></script>
+		<script type="text/javascript" src="../resources/js/messenger.js"></script>
+		<script type="text/javascript">		
+			if (!is_logged_in())
+				window.location = '../';		
+			$(function() {
+				var padding = "../";
+				var theUser = store.get('currentUser');
+				if (theUser) {
+					var theCurrentUser = JSON.parse(theUser);
+					$('#loggedinUserName').html(theCurrentUser.firstName + ' ' + theCurrentUser.lastName)
+				}
+				$("input#dateOfBirth").datepicker({ dateFormat: "yy-mm-dd" });
+				getAuth(padding, 'user/' + $.cookie('userId') + '/demographic', function(demographics, error) {
+					if (error) {
+						toastr.error("Error getting a user");
+						return false;
+					}
+					if (demographics) {
+						setSex(demographics.gender);
+						$('#dateOfBirth').val($.datepicker.formatDate('yy-mm-dd', new Date(demographics.dateOfBirth)));
+						setOccupation(padding, demographics.occupation);
+						setMaritalStatus(demographics.maritalStatus);
+						setSexOrientation(demographics.sexOrientation);
+						setLangauge(demographics.language);
+						setProvinces(demographics.province);
+						getDistrictsByProvince(padding, demographics.province, demographics.district);
+						getMunicipalitiesByDistrict(padding, demographics.district, demographics.municipality);
+						getVillagesByMunicipality(padding, demographics.municipality, demographics.village);
+					} else {
+						setSex();
+						setOccupation(padding);
+						setMaritalStatus();
+						setSexOrientation();
+						setLangauge();
+						setProvinces();
+					}
+				});
+				$('#province').on('change', function() {
+					getDistrictsByProvince(padding, $(this).val().trim());
+				});
+				$('#district').on('change', function() {
+					getMunicipalitiesByDistrict(padding, $(this).val().trim());
+				});
+				$('#municipality').on('change', function() {
+					getVillagesByMunicipality(padding, $(this).val().trim());
+				});
+				
+				$("#frmProfile").validate({
+					rules: {
+						dateOfBirth: 'required',
+						sex: 'required',
+						occupation: 'required',
+						maritalStatus: 'required',
+						sexOrientation: 'required',
+						language: 'required',
+						province: 'required',
+						district: 'required',
+						municipality: 'required',
+						village: 'required'
+					},
+					submitHandler: function() {
+						putAuth(padding, 'user/' + $.cookie('userId') + '/demographics', profileFormToJSON(), function(error) {
+							if (error) {
+								toastr.error("Error updating profile");
+								return false;
+							}
+							window.location = "../home/";
+						});
+					},
+					invalidHandler: function(event, validator) {
+						displayFormInputError(event, validator);
+					}
+				});
+				
+				var profileFormToJSON = function() {
+					return JSON.stringify({
+						dateOfBirth: $("#dateOfBirth").val().trim(),
+						gender: $("#sex").val().trim(),
+						occupation: $("#occupation").val().trim(),
+						maritalStatus: $("#maritalStatus").val().trim(),
+						sexOrientation: $("#sexOrientation").val().trim(),
+						language: $("#language").val().trim(),
+						locationDTO: {
+							province: $("#province").val().trim(),
+							district: $("#district").val().trim(),
+							municipality: $("#municipality").val().trim(),
+							village: $("#village").val().trim()
+						}
+					});
+				}
+			});			
+		</script>
+	</body>
+</html>

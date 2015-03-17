@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+	<head>
+		<meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Health Messages Communication Website</title>
+		<link rel="stylesheet" type="text/css" href="../../../js/font-awesome-4.0.3/css/font-awesome.min.css">
+		<link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+		<link rel="stylesheet" type="text/css" href="../../../js/bootstrap/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="../../../js/jqueryui/css/ui-lightness/jquery-ui-1.9.2.custom.css">
+		<link rel="stylesheet" type="text/css" href="../../../css/blue.css">
+		<link rel="stylesheet" type="text/css" href="../../../css/new.css">
+		<link rel="stylesheet" type="text/css" href="../../../css/toastr.css" />
+	</head>
+	<body>
+		<div class="modal fade" id="modal_dialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title"></h4>
+					</div>
+					<div class="modal-body"></div>
+					<div id="modal-footer hidden"  class="col-md-12"></div>
+				</div>
+			</div>
+		</div>
+		<div id="wrapper">
+			<header id="header">
+				<a id="top-bar-toggle" class="navbar-toggle collapsed" data-target=".top-bar-collapse" data-toggle="collapse" href="javascript:;"><i class="fa fa-cog"></i></a>
+				<a id="sidebar-toggle" class="navbar-toggle collapsed" data-target=".sidebar-collapse" data-toggle="collapse" href="javascript:;"><i class="fa fa-reorder"></i></a>
+			</header>
+			<nav id="top-bar" class="collapse top-bar-collapse">
+				<ul class="nav navbar-nav pull-left">
+					<li><a href=""><i class="fa fa-home"></i>Home</a></li>
+				</ul>
+				<ul class="nav navbar-nav pull-right">
+					<li class="dropdown">
+						<a class="dropdown-toggle" href="javascript:;" data-toggle="dropdown"><i class="fa fa-user"></i> <span id="loggedAs"></span><span class="caret"></span></a>
+						<ul class="dropdown-menu" role="menu">
+							<li><a href="#" onClick="logout();"><i class="fa fa-sign-out"></i>Logout</a></li>
+							<li><a href="#" onClick="setChangePasswordForm();"><i class="fa fa-key"></i>Change Password</a></li>
+						</ul>
+					</li>
+				</ul>
+			</nav>
+			<div id="sidebar-wrapper" class="collapse sidebar-collapse">
+				<div id="search">
+					<form>
+						<input id="search" class="form-control input-sm" type="text" placeholder="Search..." name="search">
+						<button id="search-btn" class="btn" type="submit"><i class="fa fa-search"></i></button>
+					</form>
+				</div>
+				<nav id="sidebar">
+					<ul id="main-nav" class="open-active">
+						<li><a href="#"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+						<li class="active"><a href=""><i class="fa fa-bullhorn"></i> Campaigns</a></li>
+						<li><a href="../../surveys/"><i class="fa fa-check-square-o"></i> Surveys</a></li>
+						<li><a href="../../news/"><i class="fa fa-globe"></i> News</a></li>
+						<li><a href="../../factsheets/"><i class="fa fa-file-text-o"></i> Health Topics</a></li>
+						<li><a href="../../events/"><i class="fa fa-calendar"></i> Events</a></li>
+					</ul>
+				</nav>
+			</div>
+			<div id="content">
+				<div id="content-header"><h1>Dashboard</h1></div>
+				<div id="content-container">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="portlet">
+								<div id="srv-portlet-header"class="portlet-header"><h3><i class="fa fa-bullhorn"></i> Campaigns</h3></div>
+								<div class="portlet-content">										
+									<form id="frmTarget" class="form" role="form">
+										<div class="form-group col-md-12"><label for="sex">Sex</label><select name="sex" id="sex" class="form-control"></select></div>
+										<div class="form-group col-md-12"><label for="occupation">Occupation</label><select name="occupation" id="occupation" class="form-control"></select></div>
+										<div class="form-group col-md-12"><label for="dateOfBirthFrom">Date of Birth (From)</label><input type="text" name="dateOfBirthFrom" id="dateOfBirthFrom" class="form-control"></div>
+										<div class="form-group col-md-12"><label for="dateOfBirthTo">Date of Birth (To)</label><input type="text" name="dateOfBirthTo" id="dateOfBirthTo" class="form-control"></div>
+										<div class="form-group col-md-12"><label for="maritalStatus">Marital Status</label><select name="maritalStatus" id="maritalStatus" class="form-control"></select></div>
+										<div class="form-group col-md-12"><label for="sexOrientation">Sex Orientation</label><select name="sexOrientation" id="sexOrientation" class="form-control"></select></div>
+										<div class="form-group col-md-12"><label for="province">Province</label><select name="province" id="province" class="form-control"></select></div>
+										<div class="form-group col-md-12"><label for="district">District</label><select name="district" id="district" class="form-control"></select></div>
+										<div class="form-group col-md-12"><label for="municipality">Municipality</label><select name="municipality" id="municipality" class="form-control"></select></div>
+										<div class="form-group col-md-12"><label for="village">Village</label><select name="village" id="village" class="form-control"></select></div>
+										<div><button type="submit" id="btnSave" class="btn btn-primary">Save</button><button type="button" id="btncancel" class="btn btn-primary" style="float: right;">Skip setting target</button></div>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<footer class="bs-footer clearFix" role="contentinfo"><ul class="nav pull-right"><li> Copyright &copy; 2014, Healthcomm.reedhousesystems.com </li></ul></footer>
+		<script type="text/javascript" src="../../../js/jquery-1.10.2.min.js"></script>
+		<script type="text/javascript" src="../../../js/jqueryui/js/jquery-ui-1.9.2.custom.min.js"></script>
+		<script type="text/javascript" src="../../../js/bootstrap/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="../../../js/jquery.validate.min.js"></script>
+		<script type="text/javascript" src="../../../js/toastr.js"></script>
+		<script type="text/javascript" src="../../../js/sha256.js"></script>
+		<script type="text/javascript" src="../../../js/enc-base64-min.js"></script>
+		<script type="text/javascript" src="../../../js/jquery.cookie.js"></script>
+		<script type="text/javascript" src="../../../js/store.js"></script>
+		<script type="text/javascript" src="../../../js/util.js"></script>
+		<script type="text/javascript" src="../../../js/dashboard.js"></script>
+		<script type="text/javascript">
+		
+			if (!is_logged_in()) window.location = '../home/';
+	
+			var storedUser = store.get('dashboard-currentUser')
+			if (storedUser) {
+				var user = JSON.parse(storedUser)
+				$('#loggedAs').html(' Logged in as ' + user.firstName + ' ' + user.lastName);
+			}
+			
+			$(function() {
+				var padding = '../../../'
+				$("input#dateOfBirthFrom").datepicker({ dateFormat: "yy-mm-dd" });
+				$("input#dateOfBirthTo").datepicker({ dateFormat: "yy-mm-dd" });
+				setProvinces();				
+				setSex();
+				setMaritalStatus();
+				setOccupation();
+				setSexOrientation();
+				$('#province').on('change', function() {
+					var province = $(this).val().trim();
+					getDistrictsByProvince(province);
+				});
+				$('#district').on('change', function() {
+					var district = $(this).val().trim();
+					getMunicipalitiesByDistrict(district);
+				});
+				$('#municipality').on('change', function() {
+					var municipality = $(this).val().trim();
+					getVillagesByMunicipality(municipality);
+				});
+				
+				$('#btncancel').click(function() {
+					window.location = '../';
+				});
+				
+				$('#frmTarget').validate({
+					rules: {
+						province: 'required',
+						district: 'required',
+						municipality: 'required',
+						village: 'required'
+					},
+					submitHandler: function() {
+						console.log('Setting campaign target...');
+						putAuth(padding, 'campaign/'+ $.cookie('campaign-id') + '/target', targetFormToJSON(), function(error) {
+							if (error) {
+								toastr.error("Error setting a target");
+								return false;
+							}
+							toastr.success('Campaign target set successfully');
+							window.location = '../add-messages/'
+						})
+					},
+					invalidHandler: function(event, validator) {
+						displayFormInputError(event, validator);
+					}
+				});
+				
+				var targetFormToJSON = function() {
+					return JSON.stringify({
+						dateOfBirthFrom: $('#dateOfBirthFrom').val().trim() == "" ? null : $('#dateOfBirthFrom').val().trim(),
+						dateOfBirthTo: $('#dateOfBirthTo').val().trim() == "" ? null : $('#dateOfBirthTo').val().trim(),
+						sex: $('#sex').val().trim() == "" ? null : $('#sex').val().trim(),
+						occupation: $('#occupation').val().trim() == "" ? null : $('#occupation').val().trim(),
+						maritalStatus: $('#maritalStatus').val().trim() == "" ? null : $('#maritalStatus').val().trim(),
+						sexOrientation: $('#sexOrientation').val().trim() == "" ? null : $('#sexOrientation').val().trim(),
+						address: {
+							province: $('#province').val().trim() == "" ? null : $('#province').val().trim(),
+							district: $('#district').val().trim() == "" ? null : $('#district').val().trim(),
+							municipality: $('#municipality').val().trim() == "" ? null : $('#municipality').val().trim(),
+							village: $('#village').val().trim() == "" ? null : $('#village').val().trim()
+						}
+					});
+				}
+			});		
+		</script>
+	</body>
+</html>

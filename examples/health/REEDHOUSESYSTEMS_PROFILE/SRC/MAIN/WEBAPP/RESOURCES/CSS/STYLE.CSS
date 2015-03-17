@@ -1,0 +1,196 @@
+
+input.error, textarea.error, select.error { border: 1px solid red; }
+label.error { color: red; }
+
+input[type="radio"],
+input[type="checkbox"] {
+margin: 4px 0 0;
+}
+.form-group {
+position: relative;
+}
+.icheckbox_minimal-blue,
+.iradio_minimal-blue {
+	display: inline-block;
+}
+.form-group .icheckbox_minimal-blue,
+.form-group .iradio_minimal-blue {
+	display: inline-block;
+	top: 4px;
+	margin-right: .5em;
+	margin-left: -20px;
+}
+.highlight { 
+	border: 1px dashed grey;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+.internal { padding-left: 10px; }
+.box {
+	white-space: nowrap;
+  	overflow: scroll;
+ }
+.facility-service { display: none; }
+
+/* Table Settings */
+
+.table-bordered thead tr,
+.table-bordered tfoot tr {
+background-color: #eee;
+background-image: -webkit-gradient(linear, left 0%, left 100%, from(#f9f9f9), to(#eeeeee));
+background-image: -webkit-linear-gradient(top, #f9f9f9, 0%, #eeeeee, 100%);
+background-image: -moz-linear-gradient(top, #f9f9f9 0%, #eeeeee 100%);
+background-image: linear-gradient(to bottom, #f9f9f9 0%, #eeeeee 100%);
+background-repeat: repeat-x;
+filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff9f9f9', endColorstr='#ffeeeeee', GradientType=0);
+}
+.table-bordered thead tr th,
+.table-bordered tfoot tr th {
+font-size: 12px;
+font-weight: 800;
+text-transform: uppercase;
+background-color: transparent;
+border-bottom-width: 1px;
+vertical-align: middle;
+}
+.table-bordered.table-highlight {
+border-top-color: #111;
+}
+.table-bordered.table-highlight thead tr:first-child {
+background-color: #444;
+background-image: -webkit-gradient(linear, left 0%, left 100%, from(#555555), to(#444444));
+background-image: -webkit-linear-gradient(top, #555555, 0%, #444444, 100%);
+background-image: -moz-linear-gradient(top, #555555 0%, #444444 100%);
+background-image: linear-gradient(to bottom, #555555 0%, #444444 100%);
+background-repeat: repeat-x;
+filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff555555', endColorstr='#ff444444', GradientType=0);
+}
+.table-bordered.table-highlight thead tr:first-child th {
+color: #fff;
+font-weight: 600;
+border: 1px solid #3a3a3a;
+}
+
+/* DataTable Settings */
+
+.datatable-columnfilter {
+width: 100% !important;
+}
+.datatable-hidesearch .dataTables_filter {
+display: none;
+}
+.dataTables_wrapper .row {
+margin-top: 0 !important;
+margin-bottom: 0 !important;
+}
+.dataTables_wrapper .dt-rt > div {
+margin-bottom: 1em !important;
+}
+.dataTables_wrapper .dt-rt > div:empty {
+margin-bottom: 0 !important;
+}
+.dataTables_wrapper .dt-rb > div {
+margin-top: 1em !important;
+}
+.dataTables_wrapper .dt-rb > div:empty {
+margin-top: 0 !important;
+}
+.dataTables_wrapper .dataTable {
+margin-bottom: .5em;
+}
+.dataTables_wrapper .dataTables_filter input,
+.dataTables_wrapper .dataTables_length select {
+	vertical-align: middle;
+	font-size: 12px;
+	height: 30px;
+	padding: 6px 8px;
+	border: 1px solid #ccc;
+	border-top-right-radius: 4px;
+	border-top-left-radius: 4px;
+	border-bottom-right-radius: 4px;
+	border-bottom-left-radius: 4px;
+	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+	transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+}
+.dataTables_wrapper .dataTables_filter input:focus,
+.dataTables_wrapper .dataTables_length select:focus {
+	outline: none;
+	border-color: #66afe9;
+	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6);
+}
+.dataTables_wrapper .dataTables_length select {
+height: auto;
+}
+.dataTables_info {
+padding-top: 6px;
+}
+div.dataTables_length label {
+	float: left;
+	text-align: left;
+	font-weight: 600;
+}
+div.dataTables_length select {
+	width: 70px;
+	margin-right: .65em;
+}
+div.dataTables_filter label {
+	float: right;
+	font-weight: 600;
+}
+div.dataTables_filter label input {
+	width: 215px;
+	margin-left: .65em;
+}
+div.dataTables_info {
+    padding-top: 8px;
+}
+div.dataTables_paginate {
+	text-align: right;
+	margin: 0;
+}
+div.dataTables_paginate .pagination {
+margin-top: 0;
+margin-bottom: 0;
+}
+.dataTable input::-ms-clear {
+display: none !important;
+}
+table.table thead .sorting,
+table.table thead .sorting_asc,
+table.table thead .sorting_desc,
+table.table thead .sorting_asc_disabled,
+table.table thead .sorting_desc_disabled {
+cursor: pointer;
+*cursor: hand;
+}
+table.table thead .sorting {
+background: url('../js/DataTables-1.9.4/media/images/sort_both.png') no-repeat center right;
+}
+table.table thead .sorting_asc {
+background: url('../js/DataTables-1.9.4/media/images/sort_asc.png') no-repeat center right;
+}
+table.table thead .sorting_desc {
+background: url('../js/DataTables-1.9.4/media/images/sort_desc.png') no-repeat center right;
+}
+table.table thead .sorting_asc_disabled {
+background: url('../js/DataTables-1.9.4/media/images/sort_asc_disabled.png') no-repeat center right;
+}
+
+/* Pagination Settings */
+
+.pagination > li > a,
+.pagination > li > span {
+	color: #222;
+}
+.pagination > .active > a,
+.pagination > .active > span,
+.pagination > .active > a:hover,
+.pagination > .active > span:hover,
+.pagination > .active > a:focus,
+.pagination > .active > span:focus {
+	z-index: 2;
+	color: #fff;
+	background-color: #e5412d;
+	border-color: #e5412d;
+	cursor: default;
+}

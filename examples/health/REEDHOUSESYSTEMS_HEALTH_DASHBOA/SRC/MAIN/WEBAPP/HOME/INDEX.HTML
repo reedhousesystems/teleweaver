@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+	<head>
+		<meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Siyakhula Living Lab Health Information Resource</title>
+		<link rel="stylesheet" type="text/css" href="../resources/font-awesome-4.0.3/css/font-awesome.min.css">
+		<link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+		<link rel="stylesheet" type="text/css" href="../resources/js/bootstrap/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="../resources/js/jqueryui/css/ui-lightness/jquery-ui-1.9.2.custom.css">
+		<link rel="stylesheet" type="text/css" href="../resources/css/toastr.css">
+		<link rel="stylesheet" type="text/css" href="../resources/css/simple.css">
+	</head>
+	<body>
+		<header>
+			<div id="header">
+				<section id="top" class="navbar navbar-inverse nav-justified navbar-fixed-top bs-docs-nav" role="banner" id="banner">
+					<div class="container">
+						<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+							<ul id="navigation" class="nav navbar-nav">
+								<li id="home" class="active"><a href="#"><i class="fa fa-home"></i> Home</a></li>
+							</ul>
+							<ul class="nav navbar-nav navbar-right">
+								<li>
+									<form id="frmLogin" class="navbar-form">
+										<div class="form-group">
+											<input type="text" name="userName" id="userName" class="form-control" placeholder="Username">
+										</div>
+										<div class="form-group">
+											<input type="password" name="password" id="password" class="form-control" placeholder="Password">
+										</div>
+										<button type="submit" id="btnLogin" class="btn btn-primary">Log In</button>
+									</form>
+								</li>
+							</ul>
+						</div>			
+					</div>
+				</section>
+			</div>
+		</header>		
+		<script type="text/javascript" src="../resources/js/jquery-1.10.2.min.js"></script>
+		<script type="text/javascript" src="../resources/js/jqueryui/js/jquery-ui-1.9.2.custom.min.js"></script>
+		<script type="text/javascript" src="../resources/js/bootstrap/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="../resources/js/jquery.cookie.js"></script>
+		<script type="text/javascript" src="../resources/js/jquery.validate.min.js"></script>
+		<script type="text/javascript" src="../resources/js/jquery.cookie.js"></script>
+		<script type="text/javascript" src="../resources/js/store.js"></script>
+		<script type="text/javascript" src="../resources/js/toastr.js"></script>
+		<script type="text/javascript" src="../resources/js/sha256.js"></script>
+		<script type="text/javascript" src="../resources/js/enc-base64-min.js"></script>
+		<script type="text/javascript" src="../resources/js/util.js"></script>
+		<script type="text/javascript" src="../resources/js/dashboard.js"></script>
+		<script type="text/javascript">
+		
+			if (is_logged_in()) window.location = '../campaigns/';			
+			
+			$(function() {
+				
+				var padding = '../'
+				
+				// Submit form on enter
+				$('input').on('keydown', function (event) {
+				  if (event.keyCode === 13)
+				    $('#btnLogin').click();
+				});
+				
+				$('#btnLogin').click(function() {
+					$('#frmLogin').validate({
+						rules: {
+							userName: 'required',
+							password : 'required'
+						},
+						messages: {
+							userName: '',
+							password: ''
+						},
+						submitHandler: function() {
+							login(padding, $('#userName').val().trim(), $('#password').val().trim(), 'authenticated', function(error) {
+								if (!error)
+									window.location = '../campaigns/';
+								else {
+									toastr.error(error.responseJSON.applicationMessage);
+									$('#password').val('');
+								}
+							}
+						)},
+						invalidHandler: function(event, validator) {
+							displayFormInputError(event, validator);
+						}
+					});
+				});
+			});
+		</script>
+	</body>
+</html>

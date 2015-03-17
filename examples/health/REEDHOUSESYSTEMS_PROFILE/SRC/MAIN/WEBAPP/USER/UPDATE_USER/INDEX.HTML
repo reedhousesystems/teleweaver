@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+	<head>
+		<meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Siyakhula Living Lab Health Information Resource</title>
+		<link rel="stylesheet" type="text/css" href="../../resources/font-awesome-4.0.3/css/font-awesome.min.css">
+		<link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+		<link rel="stylesheet" type="text/css" href="../../resources/js/bootstrap/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="../../resources/js/jquery-ui/css/ui-lightness/jquery-ui-1.9.2.custom.css">
+		<link rel="stylesheet" type="text/css" href="../../resources/css/blue.css">
+		<link rel="stylesheet" type="text/css" href="../../resources/css/toastr.css">
+		<link rel="stylesheet" type="text/css" href="../../resources/css/style.css">
+		<link rel="stylesheet" type="text/css" href="../../resources/css/simple.css">
+	</head>
+	<body>
+		<header>
+			<div id="header">
+				<section id="top" class="navbar navbar-inverse nav-justified navbar-static-top bs-docs-nav" role="banner" id="banner">
+					<div class="container">
+						<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+							<ul id="navigation" class="nav navbar-nav">
+								<li id="home" class="active"><a href="#"><i class="fa fa-home fa-fw"></i> Home</a></li>
+							</ul>
+							<ul id="navigation" class="nav navbar-nav navbar-right">
+								<li id="logout"><a href="" onClick="logoutAdmin();"><i class="fa fa-sign-out fa-fw"></i> Logout</a></li>
+							</ul>
+						</div>			
+					</div>
+				</section>
+			</div>
+		</header>
+		<div id="add-user" class="container">
+			<span><h1>Update User</h1></span>
+			<form id="frmUpdateUser" role="form">
+				<div class="form-group col-md-12"><label for="firstName">First Name</label><input type="text" name="firstName" id="firstName" class="form-control"></div>
+				<div class="form-group col-md-12"><label for="lastName">Last Name</label><input type="text" name="lastName" id="lastName" class="form-control"></div>
+				<div class="form-group col-md-12"><label for="userName">User Name</label><input type="text" name="userName" id="userName" class="form-control"></div>
+				<div class="checkbox"><input type="checkbox" class="icheck-input" name="makeAdmin" id="makeAdmin">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>Make user Administrator</strong></div>
+				<div class="form-group col-md-12">
+					<button type="submit" id="btnUpdate" class="btn btn-primary long-button">Update</button>
+					<button type="button" id="btnCancel" class="btn btn-primary long-button float-right" onClick="window.location = '../';">Cancel</button>
+				</div>
+			</form>
+		</div>
+		<script type="text/javascript" src="../../resources/js/jquery-1.10.2.min.js"></script>
+		<script type="text/javascript" src="../../resources/js/jquery-ui/js/jquery-ui-1.9.2.custom.min.js"></script>
+		<script type="text/javascript" src="../../resources/js/bootstrap/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="../../resources/js/jquery.icheck.min.js"></script>
+		<script type="text/javascript" src="../../resources/js/jquery.validate.min.js"></script>
+		<script type="text/javascript" src="../../resources/js/toastr.js"></script>
+		<script type="text/javascript" src="../../resources/js/sha256.js"></script>
+		<script type="text/javascript" src="../../resources/js/enc-base64-min.js"></script>
+		<script type="text/javascript" src="../../resources/js/jquery.cookie.js"></script>
+		<script type="text/javascript" src="../../resources/js/store.js"></script>
+		<script type="text/javascript" src="../../resources/js/util.js"></script>
+		<script type="text/javascript" src="../../resources/js/messenger.js"></script>
+		<script type="text/javascript">	
+			$(function() {
+				var padding = "../../";
+				$('.icheck-input').iCheck({
+					checkboxClass: 'icheckbox_minimal-blue'
+				});
+				
+				// Submit form on enter
+				$('input').on('keydown', function (event) {
+					if (event.keyCode === 13) $('#btnUpdate').click()
+				});
+				
+				getAuth(padding, 'user/' + $.cookie('user-to-update'), function(response, error) {
+					if (error) {
+						toastr.error("Error getting user details");
+						return false;
+					}
+					$('#firstName').val(response.firstName);
+					$('#lastName').val(response.lastName);
+					$('#userName').val(response.userName);
+				});
+				
+				$('#btnUpdate').click(function() {
+					$('#frmUpdateUser').validate({
+						rules: {
+							firstName: 'required',
+							lastName: 'required',
+							userName: 'required'
+						},
+						submitHandler: function() {
+							console.log("Updating user...");
+							putAuth(padding, 'user/' + userFormToJSON(), function(error) {
+								if (error) {
+									toastr.error("Error updating a user");
+									return false;
+								}
+								toastr.success('User details updated successfully');
+							});
+						},
+						invalidHandler: function(event, validator) {
+							displayFormInputError(event, validator);
+						}
+					});
+				});
+				
+				var userFormToJSON = function() {
+					return JSON.stringify({
+						firstName: $('#firstName').val().trim(),
+						lastName: $('#lastName').val().trim(),
+						userName:$('#userName').val().trim(),
+						role: $('#makeAdmin').is(':checked') ? 'administrator' : 'authenticated'
+					});
+				}
+			});
+		</script>
+	</body>
+</html>

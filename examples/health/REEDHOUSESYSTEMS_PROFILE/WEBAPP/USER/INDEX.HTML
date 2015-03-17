@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+	<head>
+		<meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Siyakhula Living Lab Health Information Resource</title>
+		<link rel="stylesheet" type="text/css" href="../resources/font-awesome-4.0.3/css/font-awesome.min.css">
+		<link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+		<link rel="stylesheet" type="text/css" href="../resources/js/bootstrap/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="../resources/css/jquery.dataTables.css">
+		<link rel="stylesheet" type="text/css" href="../resources/js/jquery-ui/css/ui-lightness/jquery-ui-1.9.2.custom.css">
+		<link rel="stylesheet" type="text/css" href="../resources/css/blue.css">
+		<link rel="stylesheet" type="text/css" href="../resources/css/toastr.css">
+		<link rel="stylesheet" type="text/css" href="../resources/css/style.css">
+	</head>
+	<body>
+		<div class="modal fade" id="modal_dialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title"></h4>
+					</div>
+					<div class="modal-body"></div>
+					<div id="modal-footer" class="modal-footer hidden"></div>
+				</div>
+			</div>
+		</div>
+		<header>
+			<div id="header">
+				<section id="top" class="navbar navbar-inverse nav-justified navbar-static-top bs-docs-nav" role="banner" id="banner">
+					<div class="container">
+						<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+							<ul id="navigation" class="nav navbar-nav">
+								<li id="home" class="active"><a href="#"><i class="fa fa-home fa-fw"></i> Home</a></li>
+							</ul>
+							<ul id="navigation" class="nav navbar-nav navbar-right">
+								<li id="logout"><a href="#" onClick="logoutAdmin('../', '../');"><i class="fa fa-sign-out fa-fw"></i> Logout</a></li>
+							</ul>
+						</div>
+					</div>
+				</section>
+			</div>
+		</header>
+		<div id="user-list" class="container">
+			<div>
+				<span class="btn" id="btnAdd"><i class="fa fa-plus fa-lg"></i> Add</span>
+				<span class="btn" id="btnDeactivate"><span class="fa-stack"><i class="fa fa-user fa-stack-1x"></i><i class="fa fa-ban fa-stack-2x text-danger"></i></span> Deactivate</span>
+				<span class="btn" id="btnActivate"><i class="fa fa-check fa-lg"></i> Activate</span>
+				<span class="btn" id="btnDelete"><i class="fa fa-trash-o fa-lg"></i> Delete</span>
+			</div>
+			<div class="table-responsive">
+				<table id="tblUser" class="table table-striped table-hover table-highlight table-checkable">
+					<thead>
+						<tr>
+							<th><input id="checkall" type="checkbox" class="icheck-all"></th>
+							<th>USER NAME</th>
+							<th>FIRST NAME</th>
+							<th>LAST NAME</th>
+							<th>USER TYPE</th>		
+							<th>STATUS</th>
+							<th>ACTIONS</th>
+						</tr>
+					</thead>
+					<tbody></tbody>
+					<tfoot>
+						<tr>
+							<th><input class="form-control input-sm hide" type="text" placeholder=" "></th>
+							<th><input class="form-control input-sm show" type="text" placeholder="Search by username"></th>
+							<th><input class="form-control input-sm show" type="text" placeholder="Search by first name"></th>
+							<th><input class="form-control input-sm show" type="text" placeholder="Search by last name"></th>
+							<th><input class="form-control input-sm show" type="text" placeholder="Search by user type"></th>
+							<th><input class="form-control input-sm show" type="text" placeholder="Search by status"></th>
+							<th><input class="form-control input-sm hide" type="text" placeholder=""></th>
+						</tr>
+					</tfoot>
+				</table>
+			</div>
+		</div>
+		<script type="text/javascript" src="../resources/js/jquery-1.10.2.min.js"></script>
+		<script type="text/javascript" src="../resources/js/jquery-ui/js/jquery-ui-1.9.2.custom.min.js"></script>
+		<script type="text/javascript" src="../resources/js/bootstrap/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="../resources/js/jquery.dataTables.min.js"></script>
+		<script type="text/javascript" src="../resources/js/DT_bootstrap.js"></script>
+		<script type="text/javascript" src="../resources/js/jquery.tableCheckable.js"></script>
+		<script type="text/javascript" src="../resources/js/jquery.icheck.min.js"></script>
+		<script type="text/javascript" src="../resources/js/store.js"></script>
+		<script type="text/javascript" src="../resources/js/toastr.js"></script>
+		<script type="text/javascript" src="../resources/js/jquery.validate.min.js"></script>
+		<script type="text/javascript" src="../resources/js/paging.js"></script>
+		<script type="text/javascript" src="../resources/js/sha256.js"></script>
+		<script type="text/javascript" src="../resources/js/enc-base64-min.js"></script>
+		<script type="text/javascript" src="../resources/js/jquery.cookie.js"></script>
+		<script type="text/javascript" src="../resources/js/util.js"></script>
+		<script type="text/javascript" src="../resources/js/messenger.js"></script>
+		<script type="text/javascript">		
+			if (!is_logged_in())
+				window.location = '../';			
+			$(function() {
+				var padding ="../";
+				getAuth(padding, 'user', function(data, error) {
+					if (error) {
+						toastr.error('Error getting users: ' + error.responseJSON.applicationMessage);
+						return false;
+					}
+					listUsers(data);
+				});
+				var listUsers = function(data) {
+					$('#tblUser tbody').empty();
+					var userList = data instanceof Array ? data : [data];
+					$.each(userList, function(index, user) {
+						var accountStatus = 'Logged out';
+						var strStatus;
+						switch (user.status) {
+						case 0:
+							accountStatus = 'Logged out';
+							strStatus = ""
+							break;
+						case 1:
+							accountStatus = 'Logged in'
+								strStatus = "success"
+							break;
+						case 2:
+							accountStatus = 'Locked';
+							strStatus = "warning"
+							break;
+						case 3:
+							accountStatus = 'Deactivated'
+								strStatus = "danger"
+							break;
+						}
+						$('#tblUser tbody').append(
+							'<tr id="tr-'+ user.id +'" class="' + strStatus + '">' +
+								'<td><input id="'+ user.id+'" type="checkbox" class="icheck-input"></td>' +
+								'<td>'+ user.userName +'</td>' +
+								'<td>'+ user.firstName +'</td>' +
+								'<td>'+ user.lastName +'</td>' +
+								'<td>'+ user.role +'</td>' +
+								'<td id="status-' + user.id + '">'+ accountStatus +'</td>' +
+								'<td id="actions" style="white-space:nowrap">' +
+									'<span class="btn btn-xs btn-info spaced" id="update-' + user.id + '"><i title="Edit User" class="fa fa-pencil fa-1x"></i></span>' +
+									'<span class="btn btn-xs btn-danger spaced" id="delete-' + user.id + '"><i title="Delete User" class="fa fa-trash-o fa-1x"></i></span>' +
+									'<span class="btn btn-xs btn-warning spaced" id="deactivate-' + user.id + '"><i title="Deactivate User" class="fa fa-ban fa-1x"></i></span>' +
+									'<span class="btn btn-xs btn-success spaced" id="activate-' + user.id + '"><i title="Activate User" class="fa fa-check fa-1x"></i></span>' +
+									'<span class="btn btn-xs btn-info" id="changepasswd-' + user.id + '"><i title="Change Password" class="fa fa-refresh fa-1x"></i></span>' +
+									'<span class="btn btn-xs btn-info" id="unlock-' + user.id + '"><i title="Unlock account" class="fa fa-unlock fa-1x"></i></span>' +
+								'</td>' +
+							'</tr>'
+						);
+						setupUserActions(user.id, user.status);
+						$("#deactivate-" + $.cookie("userId")).hide();
+						$("#delete-" + $.cookie("userId")).hide();
+						$('#actions span').css('margin-right', '10px');
+						
+						$('#update-'+ user.id).click(function() {
+							$.cookie('user-to-update', user.id, { path: '/' });
+							window.location = 'update-user/';
+						});
+						$('#delete-'+ user.id).click(function() {
+							var response = confirm("Are you sure you want to delete the user?");
+							if (response == false) return false;
+							delAuth(padding, 'user/' + user.id, function(error) {
+								if (!error) {
+									toastr.error("Error deleting user");
+									return false;
+								}
+								getAuth(padding, 'user', function(data, error) {
+									if (error) {
+										toastr.error('Error getting users');
+										return false;
+									}
+									listUsers(data);
+								});
+							});
+						});
+						$('#deactivate-'+ user.id).click(function() {
+							var response = confirm("Are you sure you want to deactivate the user?");
+							if (response == false)
+								return false;
+							deactivateUser(user.id);
+						});
+						$('#activate-' + user.id).click(function() {
+							var response = confirm("Are you sure you want to activate the user?");
+							if (response == false)
+								return false;
+							activateUser(user.id);
+						});
+						$('#changepasswd-' + user.id).click(function() {
+							$('.modal-title').html('Change Password');
+							$('.modal-body').html(
+								'<form id="frmChangePassword" role="form">' +
+									'<div class="form-group">' +
+										'<label for="newPassword">New Password</label>' +
+										'<input type="password" class="form-control" name="newPassword" id="newPassword" placeholder="New Password">' +
+									'</div>' +
+									'<div class="form-group">' +
+										'<label for="confirmNewPassword">Confirm New Password</label>' +
+										'<input type="password" class="form-control" name="confirmNewPassword" id="confirmNewPassword" placeholder="Confirm New Password">' +
+									'</div>' +
+									'<button type="submit" id="btnChangePassword" class="btn btn-primary">Save</button>' +
+								'</form>'
+							);
+							$('#modal_dialog').modal('show');
+							$('#frmChangePassword').validate({
+								rules: {
+									newPassword: {
+										required: true,
+										minlength: 8
+									},
+									confirmNewPassword: {
+										required: true,
+										minlength: 8
+									}
+								},
+								submitHandler: function() {
+									if ($('#newPassword').val().trim() != $('#confirmNewPassword').val().trim()) {
+										toastr.error('Passwords do not match');
+										return false;
+									}
+									console.log('Resetting password...');
+									putAuth(padding, 'user/' + user.id + '/resetpassword', JSON.stringify({ "password" : $('#newPassword').val().trim() }), function(data, error) {
+										if (error) {
+											toastr.error("Change password error: " + error.responseJSON.applicationMessage);
+											clearInput();
+											return false;
+										}
+										toastr.success('Password reset successfully');
+										closeModal();
+									});
+								}
+							});
+						});
+						$('#unlock-' + user.id).click(function() {
+							var response = confirm('Are you sure you want to unlock the user account?');
+							if (response == false) return false;
+							console.log('Unlocking a user with id : ' + user.id);
+							putAuth(padding, 'user/' + user.id + '/status', JSON.stringify({ status: status.LOGGEDOUT}), function(error) {
+								if (error) {
+									toastr.error("Error unlocking a user account");
+									return false;
+								}
+								$('#tr-' + user.id).attr("class", "active");
+								setupUserActions(user.id, status.LOGGEDOUT);
+							});
+						});
+					});					
+					var oTable = $('#tblUser').dataTable( {
+						"bDestroy": true,
+					    "bRetrieve": true,
+						'aoColumnDefs': [
+						                 { "bSortable": false, "aTargets": [ 0, 6 ] }
+						],
+				        "aaSorting": [[1, 'asc']],
+				        "iDisplayLength": 10
+				    });
+					
+					$('.icheck-input').iCheck({
+						checkboxClass: 'icheckbox_minimal-blue'
+					});
+					
+					$('.icheck-all').iCheck({
+						checkboxClass: 'icheckbox_minimal-blue'
+					});
+				    
+					$('.dataTables_filter input').prop ('placeholder', 'Search...');
+				    
+				    $('tfoot input').keyup(function() {
+				    	oTable.fnFilter(this.value, $('tfoot input').index(this));
+				    });
+				}
+				
+				$('#btnAdd').click(function() {
+					window.location = 'add-user/';
+				});
+				
+				$('#btnDeactivate').click(function() {
+					var checked_checkboxes = $('.icheck-input:checked');
+					if (checked_checkboxes.length == 0) {
+						alert('Please select users to deactivate');
+						return false;
+					}
+					var response = confirm('Are you sure you want to deactivate the selected users?');
+					if (response == false) return false;
+					checked_checkboxes.each(function(index) {
+						deactivateUser($(this).attr('id'));
+					});
+					uncheckCheckboxes();
+				});
+				
+				$('#btnActivate').click(function() {
+					var checked_checkboxes = $('.icheck-input:checked');
+					if (checked_checkboxes.length == 0) {
+						alert('Please select users to activate');
+						return false;
+					}
+					var response = confirm('Are you sure you want to activate the selected users?');
+					if (response == false) return false;
+					checked_checkboxes.each(function(index) {
+						activateUser($(this).attr('id'));
+					});
+					uncheckCheckboxes();
+				});
+				
+				var activateUser = function(userId) {
+					putAuth(padding, 'user/' + userId + '/status', JSON.stringify({ status: status.LOGGEDOUT}), function(error) {
+						if (error) {
+							toastr.error("Error activating a user");
+							return false;
+						}
+						$('#tr-' + userId).attr("class", "active");
+						setupUserActions(userId, status.LOGGEDOUT);
+					});
+				}
+				
+				var deactivateUser = function(userId) {
+					putAuth(padding, 'user/' + userId + '/status', JSON.stringify({ status: status.INACTIVE}), function(error) {
+						if (error) {
+							toastr.error("Error deactivating a user");
+							return false;
+						}
+						$('#tr-' + userId).attr("class", "danger");
+						setupUserActions(userId, status.INACTIVE);
+					});
+				}
+				
+				$('#btnDelete').click(function() {
+					var checked_checkboxes = $('.icheck-input:checked');
+					if (checked_checkboxes.length == 0) {
+						alert('Please select users to delete');
+						return false;
+					}
+					var response = confirm('Are you sure you want to delete the selected users?');
+					if (response == false) return false;
+					checked_checkboxes.each(function(index) {
+						delAuth(padding, 'user/' + $(this).attr('id'), function(error) {
+							if (error) {
+								toastr.error("Error deleting a user");
+								return false;
+							}
+							getAuth(padding, 'user', function(data, error) {
+								if (error) {
+									toastr.error('Error getting users');
+									return false;
+								}
+								listUsers(data);
+							});
+						});
+					});
+					uncheckCheckboxes();
+				});
+				
+				var setupUserActions = function(id, status) {
+					switch (status) {
+					case 2:
+						$('#activate-' + id).hide();
+						$('#deactivate-' + id).hide();
+						$("#update-" + id).hide();
+						$("#delete-" + id).hide();
+						$('#changepasswd-' + id).hide();
+						$('#unlock-' + id).show();
+					case 3:
+						$('#activate-' + id).show();
+						$('#deactivate-' + id).hide();
+						$("#update-" + id).hide();
+						$("#delete-" + id).show();
+						$('#changepasswd-' + id).hide()
+						$('#unlock-' + id).hide();
+						break;
+					default:
+						$('#activate-' + id).hide();
+						$('#deactivate-' + id).show();
+						$("#update-" + id).show();
+						$("#delete-" + id).show();
+						$('#changepasswd-' + id).show()
+						$('#unlock-' + id).hide();
+						break;
+					}
+				}				
+			});
+		</script>
+	</body>
+</html>

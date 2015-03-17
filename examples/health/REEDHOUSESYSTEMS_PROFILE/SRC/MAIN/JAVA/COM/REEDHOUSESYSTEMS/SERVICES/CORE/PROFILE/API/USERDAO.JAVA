@@ -1,0 +1,27 @@
+package com.reedhousesystems.services.core.profile.api;
+
+import java.util.Date;
+import java.util.List;
+
+import com.reedhousesystems.services.core.profile.model.Demographic;
+import com.reedhousesystems.services.core.profile.model.User;
+
+public interface UserDao {
+	
+	public void saveOrUpdateUser(User user );
+	
+	public void deleteUser( User user );
+	
+	public User getUserByUUId( String uuid );
+	
+	public User getUserByUserName(String userName);
+	
+	public List<User> getUsersWithExpiredTokens(Date date);
+	
+	public List<User> getAllUsers();
+	
+	public User findBySessionToken(String token);
+	
+	public Demographic saveDemographics(Demographic demographic);
+	
+}
